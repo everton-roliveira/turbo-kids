@@ -144,6 +144,12 @@ h2{margin:0 0 6px;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;
 .botoes{display:flex;gap:10px;margin-top:6px}
 .botoes .bt-grande{font-size:1.3rem}
 .botoes>*{flex:1}
+/* resultado de lado: o carro com a carinha continua aparecendo */
+#resultado{place-items:center end;background:linear-gradient(90deg,transparent 30%,rgba(8,9,12,.78) 58%)}
+#resultado .cartao{width:min(400px,58%)}
+@media (orientation:portrait){#resultado{place-items:end center;background:linear-gradient(180deg,transparent 30%,rgba(8,9,12,.78) 55%);padding-bottom:max(16px,env(safe-area-inset-bottom,0px))}
+  #resultado .cartao{width:100%}}
+.versao{display:block;text-align:center;color:var(--suave);font-size:.75rem;margin-top:4px}
 /* ---------- Novidades ---------- */
 .hud-esq{display:flex;flex-direction:column;gap:4px}
 .hud-moedas{display:inline-flex;align-items:center;gap:4px;background:rgba(0,0,0,.5);border:2px solid var(--ouro);color:var(--ouro);border-radius:999px;
@@ -211,6 +217,7 @@ body.inclinar #bEsq,body.inclinar #bDir{display:none}
     </div>
     <p class="como" id="gDicaInstalar" hidden></p>
     <button id="gZerar" class="link">Recomeçar do zero</button>
+    <small class="versao">Turbo Kids · versão 8</small>
   </div>
 </div>
 
@@ -1404,7 +1411,7 @@ const Festa={raf:0,
 };
 
 function mostrarResultado(){
-  corrida.mostrou=true;modo='fim';Musica.parar();$('#dica').hidden=true;
+  corrida.mostrou=true;modo='fim';Musica.parar();$('#dica').hidden=true;redimensionar();
   const pos=corrida.jogador.posFinal,premio=PREMIO[pos-1]||0,passou=pos<=3,pegas=corrida.pegas,total=premio+pegas;
   const nv=corrida.nivel;save.trofeus[nv]=Math.min(save.trofeus[nv]||99,pos);
   save.moedas+=total;if(passou)save.nivel++;salvar();
@@ -1566,12 +1573,13 @@ $('#gInstalar').addEventListener('click',async()=>{if(!pedidoInstalar)return;ped
 if(foraDeMoldura&&!ehApp()&&/iPhone|iPad|iPod/.test(navigator.userAgent)){const d=$('#gDicaInstalar');d.hidden=false;
   d.textContent='📲 Para virar app: toque em Compartilhar e depois em “Adicionar à Tela de Início”.';}
 if('serviceWorker' in navigator&&foraDeMoldura&&location.protocol==='https:'){
-  addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});});}
+  addEventListener('load',()=>{navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(r=>r.update()).catch(()=>{});});}
 
 /* ================= Loop ================= */
 function redimensionar(){
   const w=innerWidth,h=innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;retrato=h>w;
   if(modo==='garagem'){camera.fov=retrato?58:42;if(retrato)camera.setViewOffset(w,h,0,h*0.26,w,h);else camera.setViewOffset(w,h,w*0.23,0,w,h);}
+  else if(modo==='fim'){if(retrato)camera.setViewOffset(w,h,0,h*0.2,w,h);else camera.setViewOffset(w,h,w*0.2,0,w,h);}
   else camera.clearViewOffset();
   camera.updateProjectionMatrix();
 }

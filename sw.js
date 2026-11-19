@@ -1,6 +1,6 @@
 // Guarda o jogo no celular para abrir sem internet.
-// A página sempre tenta a versão nova primeiro; o resto (Three.js, fontes, ícones) vem do cache.
-const CACHE = 'turbo-kids-v2';
+// A página sempre busca a versão nova (sem o cache de 10 min do GitHub Pages); o resto (Three.js, fontes, ícones) vem do cache.
+const CACHE = 'turbo-kids-v3';
 const ARQUIVOS = [
   './', './index.html', './manifest.webmanifest', './icone.svg', './icone-180.png', './icone-192.png', './icone-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
@@ -23,7 +23,7 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   if (req.mode === 'navigate') {
     e.respondWith(
-      fetch(req)
+      fetch(req.url, { cache: 'no-store' })
         .then((r) => { const copia = r.clone(); caches.open(CACHE).then((c) => c.put('./index.html', copia)); return r; })
         .catch(() => caches.match('./index.html')),
     );
