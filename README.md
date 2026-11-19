@@ -16,8 +16,23 @@ Jogo de corrida 3D para celular (Android e iPhone), feito para crianças pequena
 - Uma batida de lado tira o outro carro da pista, e os outros podem fazer o mesmo com você.
 - A buzina faz o carro da frente sair do caminho.
 
+## Personagens
+Seis carros com nome, número e garagem própria:
+
+| Carro | Estilo |
+|---|---|
+| Rubi nº 7 | Supercarro italiano |
+| Trovão nº 33 | Superesportivo bravo |
+| Cometa nº 21 | Hipercarro inglês |
+| Barão nº 4 | Esportivo alemão de pista |
+| Tornado nº 12 | Muscle car de corrida |
+| Floco nº 24 | Carro de corrida de 24 horas |
+
+Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a câmera e mudam de cara na corrida: ficam bravos quando vão bater, tontos quando são jogados para fora, assustados no buraco e felizes no turbo, no pulo e no pódio. Dá para desligar as carinhas na garagem.
+
 ## Garagem
-- 6 carros (inspirados em estilos famosos, sem marcas), 12 cores, adesivos (raio, chamas, estrelas, listras), cor das rodas e o nome da criança na placa.
+- Cada personagem tem a sua garagem, com cores, objetos e o nome na parede.
+- 12 cores, adesivos (raio, chamas, estrelas, listras), cor das rodas e o nome da criança na placa.
 - Oficina com 4 melhorias: motor, aceleração, amortecedor e pneus.
 - Álbum de troféus com a melhor posição em cada pista.
 
