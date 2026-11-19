@@ -29,6 +29,7 @@ html,body{height:100%;overflow:hidden;background:var(--asfalto);color:var(--text
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 button:focus-visible{outline:3px solid var(--ouro);outline-offset:3px}
 [hidden]{display:none!important}
+#hud.chegou #bEsq,#hud.chegou #bDir,#hud.chegou #bAcel,#hud.chegou .coluna{opacity:0;pointer-events:none;transition:opacity .4s}
 #cena{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
 
 /* ---------- Garagem ---------- */
@@ -1123,7 +1124,7 @@ function iniciarCorrida(){
     pegas:0,posAnt:4,voltaAnt:0,turboAvisado:true,t:0,tut:null};
   const barra=$('#hProg');barra.innerHTML='';
   for(const c of carros){const el=document.createElement('i');el.className='ponto'+(c.ehJogador?' eu':'');el.style.background=c.cor;barra.appendChild(el);c.ponto=el;}
-  $('#hud').hidden=false;$('#garagem').hidden=true;$('#resultado').hidden=true;$('#pausa').hidden=true;$('#album').hidden=true;
+  $('#hud').classList.remove('chegou');$('#hud').hidden=false;$('#garagem').hidden=true;$('#resultado').hidden=true;$('#pausa').hidden=true;$('#album').hidden=true;
   $('#bAcel').classList.toggle('auto',save.auto);$('#bAcel').textContent=save.auto?'AUTO':'ACELERAR';
   document.body.classList.toggle('inclinar',!!save.inclinar);
   entrada.acel=entrada.esq=entrada.dir=false;
@@ -1286,13 +1287,19 @@ function atualizarCamera(dt,imediato){
   const j=corrida.jogador;amostra(j.prog,A);
   const d=j.estado==='fora'?j.dFora+j.dirFora*Math.min(j.tFora,1)*9:j.d*0.85;
   const turbo=j.turboT>0,tras=turbo?13.5:11,alt=(turbo?4.4:5.0)+j.alt*0.6;
+  const fimT=j.terminou?corrida.fimT:0;
+  if(fimT>0){// chegada: a câmera dá a volta até a frente do carro para mostrar a carinha
+    const k=Math.min(1,fimT/1.8),e=k*k*(3-2*k),phi=e*Math.PI*0.87,D=11-e*5.6,mp=j.mesh.position;
+    camDesejo.set(mp.x+(-A.tx*Math.cos(phi)+A.rx*Math.sin(phi))*D,5-e*3.2,mp.z+(-A.tz*Math.cos(phi)+A.rz*Math.sin(phi))*D);
+    camPos.copy(camDesejo);camOlhar.set(mp.x+A.tx*e*1.2,0.9+(1-e)*0.3,mp.z+A.tz*e*1.2);}
+  else{
   camDesejo.set(A.x+A.rx*d-A.tx*tras,alt,A.z+A.rz*d-A.tz*tras);
   if(imediato)camPos.copy(camDesejo);else camPos.lerp(camDesejo,1-Math.exp(-5*dt));
-  camOlhar.set(A.x+A.rx*d+A.tx*12,1.2+j.alt*0.8,A.z+A.rz*d+A.tz*12);
+  camOlhar.set(A.x+A.rx*d+A.tx*12,1.2+j.alt*0.8,A.z+A.rz*d+A.tz*12);}
   camera.position.copy(camPos);
   if(tremor>0&&!reduzMov){camera.position.x+=(Math.random()-0.5)*tremor;camera.position.y+=(Math.random()-0.5)*tremor;}
   tremor=Math.max(0,tremor-dt*2.5);camera.lookAt(camOlhar);
-  const fovAlvo=(retrato?74:62)+(turbo?10:0);
+  const fovAlvo=fimT>0?(retrato?62:48):(retrato?74:62)+(turbo?10:0);
   if(imediato)camera.fov=fovAlvo;else camera.fov+=(fovAlvo-camera.fov)*Math.min(1,4*dt);camera.updateProjectionMatrix();
   const mp=j.mesh.position,s=corrida.sol;s.position.set(mp.x+40,90,mp.z+25);s.target.position.set(mp.x,0,mp.z);s.target.updateMatrixWorld();
 }
@@ -1342,7 +1349,7 @@ function atualizarCorrida(dt){
   atualizarCamera(dt,false);atualizarHUD();narrar();
   if(corrida.tut)Tutorial.atualizar(corrida.tut,dt);
   const j=corrida.jogador;Som.motorAtualizar(j.v,true,j.turboT>0);
-  if(j.terminou){corrida.fimT+=dt;if(corrida.fimT>2.6&&!corrida.mostrou)mostrarResultado();}
+  if(j.terminou){if(!corrida.fimT)$('#hud').classList.add('chegou');corrida.fimT+=dt;j.vmax=Math.max(18,j.vmax-dt*22);if(corrida.fimT>4.6&&!corrida.mostrou)mostrarResultado();}
 }
 
 /* ================= Ajuda na primeira corrida ================= */

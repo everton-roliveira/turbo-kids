@@ -28,7 +28,7 @@ Seis carros com nome, número e garagem própria:
 | Tornado nº 12 | Muscle car de corrida |
 | Floco nº 24 | Carro de corrida de 24 horas |
 
-Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a câmera e mudam de cara na corrida: ficam bravos quando vão bater, tontos quando são jogados para fora, assustados no buraco e felizes no turbo, no pulo e no pódio. Dá para desligar as carinhas na garagem.
+Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a câmera e mudam de cara na corrida: ficam bravos quando vão bater, tontos quando são jogados para fora, assustados no buraco e felizes no turbo, no pulo e no pódio. Na chegada, a câmera vira para a frente do carro e mostra a carinha feliz ou triste antes do resultado. Dá para desligar as carinhas na garagem.
 
 ## Garagem
 - Cada personagem tem a sua garagem, com cores, objetos e o nome na parede.
