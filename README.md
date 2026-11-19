@@ -42,7 +42,10 @@ Campo, praia, deserto, cidade, neve e noite. A partir da pista 2 aparece um tún
 ## Para crianças pequenas
 - Uma voz fala em português: contagem, "turbo pronto", posição e resultado (dá para desligar).
 - A primeira corrida mostra uma mãozinha apontando cada botão.
-- Quem está muito na frente diminui um pouco a velocidade, para a corrida não ficar frustrante.
+- Dificuldade pensada para 5 anos: adversários mais lentos que o carro da criança, poucos buracos e placas, curvas que quase não empurram.
+- Ajuda na direção (liga e desliga na garagem): se a criança não estiver virando, o carro desvia sozinho das placas.
+- Os adversários não tentam bater nos primeiros segundos, e até a pista 4 a batida deles só empurra.
+- Quem está muito na frente diminui a velocidade, para a corrida não ficar frustrante.
 - Música e comemoração com confete e fogos no pódio.
 
 ## Técnico

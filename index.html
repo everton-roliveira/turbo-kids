@@ -212,12 +212,13 @@ body.inclinar #bEsq,body.inclinar #bDir{display:none}
       <button id="gVoz" class="chip" aria-pressed="true">🗣️ Voz</button>
       <button id="gAuto" class="chip" aria-pressed="false">Acelerar sozinho</button>
       <button id="gRosto" class="chip" aria-pressed="true">😀 Carinhas</button>
+      <button id="gAjuda" class="chip" aria-pressed="true">🛟 Ajuda na direção</button>
       <button id="gInclinar" class="chip" aria-pressed="false">📱 Virar inclinando</button>
       <button id="gInstalar" class="chip" hidden>📲 Instalar o jogo</button>
     </div>
     <p class="como" id="gDicaInstalar" hidden></p>
     <button id="gZerar" class="link">Recomeçar do zero</button>
-    <small class="versao">Turbo Kids · versão 8</small>
+    <small class="versao">Turbo Kids · versão 9</small>
   </div>
 </div>
 
@@ -335,7 +336,7 @@ const PERSONAGENS={
 /* ================= Progresso salvo ================= */
 const CHAVE='corrida-turbo-v1';
 const PADRAO=()=>({moedas:0,nivel:1,cor:'#d40000',modelo:'rosso',up:{motor:0,acel:0,amort:0,pneu:0},auto:false,som:true,
-  musica:true,voz:true,tutorial:false,adesivo:'nenhum',aro:null,nome:'',inclinar:false,trofeus:{},qualidade:null,rosto:true});
+  musica:true,voz:true,ajuda:true,tutorial:false,adesivo:'nenhum',aro:null,nome:'',inclinar:false,trofeus:{},qualidade:null,rosto:true});
 let save=PADRAO();
 try{const s=JSON.parse(localStorage.getItem(CHAVE)||'null');if(s){save=Object.assign(PADRAO(),s);save.up=Object.assign(PADRAO().up,s.up||{});
   if(!save.trofeus||typeof save.trofeus!=='object')save.trofeus={};}}catch(e){}
@@ -367,16 +368,17 @@ const AROS=[['#d6d9de','Prata'],['#2a2c31','Preto'],['#d4a017','Dourado'],['#f2f
 /* cada carro tem sua buzina (duas notas) */
 const BUZINAS={rosso:[440,554],touro:[330,415],flecha:[523,659],gt:[392,494],v8:[220,277],proto:[587,740]};
 function paramsNivel(n){return{
-  aiVmax:Math.min(44+n*4,84),
-  buracos:Math.min(3+n*2,24),
-  bloqueios:Math.min(1+Math.floor(n*1.5),14),
-  drift:Math.min(0.12+n*0.05,0.6),
-  agressao:Math.min(0.15+n*0.08,0.75),
+  // dificuldade pensada para criança pequena: sobe devagar e tem teto baixo
+  aiVmax:Math.min(37+n*2,62),
+  buracos:Math.min(2+n,12),
+  bloqueios:Math.min(1+Math.floor(n/2),7),
+  drift:Math.min(0.04+n*0.02,0.25),
+  agressao:Math.min(0.04+n*0.03,0.3),
   desvio:Math.min(0.5+n*0.06,0.95),
   voltas:2};}
 function statsJogador(){const u=save.up;return{
-  vmax:52+u.motor*6, acel:15+u.acel*4, lat:11+u.pneu*1.6, rateLat:6+u.pneu,
-  fatorLento:0.5+u.amort*0.08, lentoDur:1.6-u.amort*0.22, perdaBuraco:0.45+u.amort*0.09};}
+  vmax:52+u.motor*6, acel:19+u.acel*4, lat:13+u.pneu*1.6, rateLat:8+u.pneu,
+  fatorLento:Math.min(0.95,0.68+u.amort*0.06), lentoDur:Math.max(0.4,1.1-u.amort*0.14), perdaBuraco:Math.min(0.95,0.68+u.amort*0.06)};}
 
 /* ================= Som ================= */
 const Som={ctx:null,
@@ -1124,7 +1126,7 @@ function iniciarCorrida(){
       alt:0,valt:0,tRampa:0,tPad:0,
       decisao:{},faixaAlvo:i%2?6:-6,tDecide:0,ramT:0,afastaT:0};
     if(eh){Object.assign(c,statsJogador());jogador=c;}
-    else Object.assign(c,{vmax:p.aiVmax+(P.rnd()*2-1)*4,acel:Math.min(13+nivel*0.8,22),lat:7,latRam:15,rateLat:5,fatorLento:0.5,lentoDur:1.5,perdaBuraco:0.45});
+    else Object.assign(c,{vmax:p.aiVmax+(P.rnd()*2-1)*4,acel:Math.min(13+nivel*0.8,22),lat:7,latRam:nivel<=4?9:13,rateLat:5,fatorLento:0.5,lentoDur:1.5,perdaBuraco:0.45});
     carros.push(c);
   }
   corrida={cena,sol,p,obs,carros,jogador,tema,nivel,moedasMesh,ordem:[],contagem:3.6,ultimoNum:4,fimT:0,mostrou:false,
@@ -1163,6 +1165,12 @@ function controlarJogador(c){
   let steer=(entrada.dir?1:0)-(entrada.esq?1:0);
   if(save.inclinar&&!steer)steer=entrada.incl;
   c.alvoVd=steer*c.lat*Math.min(1,0.4+c.v/25);
+  // ajuda na direção: sem a criança virar, o carro desvia sozinho das placas de interdição
+  if(!steer&&save.ajuda){const s=mod(c.prog,P.L);
+    for(const b of corrida.obs.bloqueios){const a=mod(b.s-s,P.L);
+      if(a>2&&a<30+c.v*0.9&&Math.abs(c.d-b.d)<4.2){
+        const livre=FAIXAS.filter(f=>Math.abs(f-b.d)>=4.5).sort((x,y)=>Math.abs(x-c.d)-Math.abs(y-c.d))[0];
+        if(livre!==undefined)c.alvoVd=clamp((livre-c.d)*3,-c.lat,c.lat);break;}}}
 }
 function controlarIA(c,dt){
   const p=corrida.p,s=mod(c.prog,P.L),j=corrida.jogador;
@@ -1177,7 +1185,7 @@ function controlarIA(c,dt){
         if(a>2&&a<18&&Math.abs(o.d-f)<2.5&&o.v<c.v-3)k+=4;}
       if(k<menor){menor=k;melhor=f;}}
     c.faixaAlvo=melhor;
-    if(!c.ehJogador&&c.ramT<=0&&j.estado==='normal'&&j.invul<=0&&!j.terminou&&!corrida.tut){
+    if(!c.ehJogador&&c.ramT<=0&&j.estado==='normal'&&j.invul<=0&&!j.terminou&&!corrida.tut&&corrida.t>15){
       const ds=difProg(j,c),dd=j.d-c.d;
       if(Math.abs(ds)<3.2&&Math.abs(dd)<6&&Math.abs(dd)>1.5&&Math.random()<p.agressao*0.25)c.ramT=0.8;}
   }
@@ -1185,8 +1193,8 @@ function controlarIA(c,dt){
   else{c.ramT=0;c.alvoVd=clamp((c.faixaAlvo-c.d)*2.6,-c.lat,c.lat);}
   c.acelerando=true;
   // ajuda: quem está muito na frente do jogador alivia, quem ficou para trás acelera um pouco
-  c.multV=1;if(!c.ehJogador){const diff=c.prog-j.prog,forca=corrida.nivel<=3?1:0.7;
-    if(diff>20)c.multV=1-Math.min(0.25,(diff-20)/220)*forca;else if(diff<-30)c.multV=1+Math.min(0.1,(-diff-30)/250);}
+  c.multV=1;if(!c.ehJogador){const diff=c.prog-j.prog,forca=corrida.nivel<=5?1:0.8;
+    if(diff>12)c.multV=1-Math.min(0.35,(diff-12)/140)*forca;else if(diff<-30)c.multV=1+Math.min(0.1,(-diff-30)/250);}
 }
 function fisica(c,dt){
   if(c.estado==='fora'){c.tFora+=dt;if(c.tFora>2){c.estado='normal';c.d=0;c.vd=0;c.v=0;c.invul=2;c.faixaAlvo=0;c.alt=0;c.valt=0;c.mesh.rotation.set(0,0,0);}return;}
@@ -1226,7 +1234,7 @@ function colisoes(){
     const sd=Math.sign(dd)||1;
     if(Math.abs(ds)<3.0){
       const pa=a.vd*sd,pb=-b.vd*sd,atk=pa>=pb?a:b,vit=atk===a?b:a,forca=Math.max(pa,pb);
-      if(forca>7.5&&vit.invul<=0&&atk.invul<=0){derrubar(vit,atk===a?sd:-sd,atk);continue;}
+      if(forca>(vit.ehJogador?11:7.5)&&vit.invul<=0&&atk.invul<=0){derrubar(vit,atk===a?sd:-sd,atk);continue;}
       const pen=(2.1-Math.abs(dd))/2;a.d-=sd*pen;b.d+=sd*pen;const m=(a.vd+b.vd)/2;a.vd=m-sd*1.5;b.vd=m+sd*1.5;
     }else{const tras=ds>0?a:b,frente=tras===a?b:a;tras.v=Math.min(tras.v,frente.v*0.92);tras.prog-=(4.4-Math.abs(ds))*0.5;}
   }
@@ -1471,6 +1479,7 @@ function renderGaragem(){
   chip(save.voz?'🗣️ Voz ligada':'🗣️ Voz desligada',save.voz)($('#gVoz'));
   chip('Acelerar sozinho: '+(save.auto?'sim':'não'),save.auto)($('#gAuto'));
   chip('😀 Carinhas: '+(save.rosto?'sim':'não'),save.rosto)($('#gRosto'));
+  chip('🛟 Ajuda na direção: '+(save.ajuda?'sim':'não'),save.ajuda)($('#gAjuda'));
   chip(save.inclinar?'📱 Virar inclinando: sim':'📱 Virar inclinando: não',save.inclinar)($('#gInclinar'));
   const n=Object.keys(save.trofeus).length;$('#gAlbum').textContent='🏆 Álbum'+(n?' ('+n+')':'');
 }
@@ -1503,6 +1512,7 @@ $('#gSom').addEventListener('click',()=>{save.som=!save.som;salvar();Som.ligar(s
 $('#gMusica').addEventListener('click',()=>{save.musica=!save.musica;salvar();renderGaragem();});
 $('#gVoz').addEventListener('click',()=>{save.voz=!save.voz;salvar();renderGaragem();if(save.voz)Voz.falar('Oi! Eu vou falar com você na corrida!',{urgente:true});});
 $('#gAuto').addEventListener('click',()=>{save.auto=!save.auto;salvar();renderGaragem();});
+$('#gAjuda').addEventListener('click',()=>{save.ajuda=!save.ajuda;salvar();renderGaragem();});
 $('#gRosto').addEventListener('click',()=>{save.rosto=!save.rosto;salvar();trocarCarroGaragem();renderGaragem();
   const r=garagem.carro.userData.rosto;if(r)r.reagir('feliz',1.5);});
 $('#gInclinar').addEventListener('click',async()=>{
