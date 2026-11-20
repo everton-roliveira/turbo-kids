@@ -27,9 +27,9 @@ export function renderGaragem(){
   if(!ms.children.length)for(const id of ORDEM_MODELOS){const m=MODELOS[id];const b=document.createElement('button');b.className='modelo';b.dataset.id=id;
     const i=document.createElement('i');i.style.background=m.cor;const t=document.createElement('span');const nb=document.createElement('b');nb.textContent=PERSONAGENS[id].nome+' ';
     const nn=document.createElement('em');nn.textContent=PERSONAGENS[id].num;nb.append(nn);
-    const ns=document.createElement('small');ns.textContent=m.sub;t.append(nb,ns);const pr=document.createElement('span');pr.className='preco';b.append(i,t,pr);ms.appendChild(b);}
+    const ns=document.createElement('small');ns.textContent=m.sub;t.append(nb,ns);const pr=document.createElement('span');pr.className='preco';t.append(pr);b.append(i,t);ms.appendChild(b);}
   for(const b of ms.children){const id=b.dataset.id,livre=carroLiberado(id);b.setAttribute('aria-pressed',String(id===vid));
-    b.classList.toggle('travado',!livre);b.querySelector('.preco').textContent=livre?'':'🔒 💰 '+PRECO_CARRO[id];}
+    b.classList.toggle('travado',!livre);b.querySelector('.preco').textContent=livre?'':'🔒 💰 '+PRECO_CARRO[id].toLocaleString('pt-BR');}
   // compra do carro que está na garagem (prévia)
   const cp=$('#gCompra');cp.hidden=!garagem.previa;
   if(garagem.previa){const preco=PRECO_CARRO[vid],falta=preco-save.moedas;
@@ -63,7 +63,7 @@ export function renderGaragem(){
   $('#gTurboAnuncio').hidden=!pode;$('#gTurboAnuncio').textContent=`${tv} Correr com ${CONFIG_ANUNCIOS.turbosExtras} turbos extras`;
   $('#gMoedasAnuncio').hidden=!pode;$('#gMoedasAnuncio').textContent=`${tv} Ganhar 💰 ${CONFIG_ANUNCIOS.moedasPorAnuncio}`+(adm?'':` (hoje ainda ${Anuncios.restantes()})`);
   $('#gAnuncios').hidden=!Anuncios.provedor||adm;chip('📺 Prêmios com anúncio: '+(save.premiosAnuncio!==false?'sim':'não'),save.premiosAnuncio!==false)($('#gAnuncios'));
-  $('#gVersao').textContent='Turbo Kids · versão 20'+(adm?' · ADM (sem anúncios)':'');
+  $('#gVersao').textContent='Turbo Kids · versão 21'+(adm?' · ADM (sem anúncios)':'');
 }
 export let tNome=0;
 $('#gNome').addEventListener('input',e=>{const v=e.target.value.replace(/[^\p{L}\p{N} ]/gu,'').slice(0,10);if(v!==e.target.value)e.target.value=v;
