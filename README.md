@@ -37,7 +37,7 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 - Álbum de troféus com a melhor posição em cada pista.
 
 ## Cenários
-16 pistas, cada uma com o seu cenário:
+20 pistas, cada uma com o seu cenário:
 
 1. Campo Verde
 2. Praia
@@ -55,8 +55,12 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 14. Polo Sul: pinguins, iglus, bonecos de neve e blocos de gelo
 15. Canteiro de Obras: guindastes, caminhões, montes de terra e cones
 16. Parque de Diversões: rodas-gigantes, tendas de circo e balões
+17. Fundo do Mar: corais, algas, peixinhos, estrelas-do-mar, bolhas e submarinos amarelos
+18. Safári: girafas, elefantes, acácias e capim
+19. Cidade do Futuro: torres com anéis de neon, discos voadores, robozinhos e céu estrelado
+20. Jardim das Cerejeiras: cerejeiras floridas, pagodes, portais vermelhos e lanternas de pedra
 
-A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois da pista 16 os cenários se repetem com traçados novos.
+A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois da pista 20 os cenários se repetem com traçados novos.
 
 ## Para crianças pequenas
 - Uma voz fala em português: contagem, "turbo pronto", posição e resultado (dá para desligar).
