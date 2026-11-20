@@ -35,7 +35,7 @@ Só o **Pipoca nº 1** vem liberado. Os outros são comprados na garagem com as 
 | Floco nº 24 | Carro de corrida de 24 horas | 11.000 |
 | Dragão nº 99 | Supercarro lendário: solta fogo pelas laterais (maior no turbo), rodas douradas e neon embaixo | 15.000 |
 
-O administrador tem todos os carros liberados. Quem já jogava antes desta loja continua com os 6 carros que eram grátis.
+O preço fica amarelo quando dá para comprar e cinza quando faltam moedas. Os comprados mostram "✓ Seu". O administrador tem todos os carros liberados.
 
 Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a câmera e mudam de cara na corrida: ficam bravos quando vão bater, tontos quando são jogados para fora, assustados no buraco e felizes no turbo, no pulo e no pódio. Na chegada, a câmera vira para a frente do carro e mostra a carinha feliz ou triste antes do resultado. Dá para desligar as carinhas na garagem.
 
