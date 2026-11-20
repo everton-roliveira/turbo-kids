@@ -63,7 +63,7 @@ export function renderGaragem(){
   $('#gTurboAnuncio').hidden=!pode;$('#gTurboAnuncio').textContent=`${tv} Correr com ${CONFIG_ANUNCIOS.turbosExtras} turbos extras`;
   $('#gMoedasAnuncio').hidden=!pode;$('#gMoedasAnuncio').textContent=`${tv} Ganhar 💰 ${CONFIG_ANUNCIOS.moedasPorAnuncio}`+(adm?'':` (hoje ainda ${Anuncios.restantes()})`);
   $('#gAnuncios').hidden=!Anuncios.provedor||adm;chip('📺 Prêmios com anúncio: '+(save.premiosAnuncio!==false?'sim':'não'),save.premiosAnuncio!==false)($('#gAnuncios'));
-  $('#gVersao').textContent='Turbo Kids · versão 19'+(adm?' · ADM (sem anúncios)':'');
+  $('#gVersao').textContent='Turbo Kids · versão 20'+(adm?' · ADM (sem anúncios)':'');
 }
 export let tNome=0;
 $('#gNome').addEventListener('input',e=>{const v=e.target.value.replace(/[^\p{L}\p{N} ]/gu,'').slice(0,10);if(v!==e.target.value)e.target.value=v;
@@ -98,9 +98,11 @@ $('#gAnuncios').addEventListener('click',()=>{save.premiosAnuncio=save.premiosAn
 // administrador: tocar 5 vezes na versão e digitar o código
 let toquesVersao=0,tVersao=0;
 $('#gVersao').addEventListener('click',async()=>{const ag=Date.now();toquesVersao=ag-tVersao<1500?toquesVersao+1:1;tVersao=ag;if(toquesVersao<5)return;toquesVersao=0;
-  if(ehAdmin()){if(confirm('Sair do modo administrador?')){sairAdmin();renderGaragem();}return;}
+  if(ehAdmin()){if(confirm('Sair do modo administrador?')){sairAdmin();
+    // sem o administrador, os carros não comprados voltam a ficar fechados
+    if(!carroLiberado(save.modelo)){save.modelo='basico';save.cor=MODELOS.basico.cor;salvar();}garagem.previa=null;trocarCarroGaragem();renderGaragem();}return;}
   const codigo=prompt('Código do administrador');if(codigo==null)return;
-  if(await entrarAdmin(codigo)){aviso('Modo administrador: sem anúncios ⭐','bom');renderGaragem();}else aviso('Código errado','ruim');});
+  if(await entrarAdmin(codigo)){if(garagem.previa){save.modelo=garagem.previa;garagem.previa=null;salvar();trocarCarroGaragem();}aviso('Modo administrador: sem anúncios e todos os carros ⭐','bom');renderGaragem();}else aviso('Código errado','ruim');});
 $('#gSom').addEventListener('click',()=>{save.som=!save.som;salvar();Som.ligar(save.som);renderGaragem();});
 $('#gMusica').addEventListener('click',()=>{save.musica=!save.musica;salvar();renderGaragem();});
 $('#gVoz').addEventListener('click',()=>{save.voz=!save.voz;salvar();renderGaragem();if(save.voz)Voz.falar('Oi! Eu vou falar com você na corrida!',{urgente:true});});

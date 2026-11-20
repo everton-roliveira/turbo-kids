@@ -15,5 +15,5 @@ export default {
       ['caixa',.02,.1,3.4,-1.0,.85,-.75,'branco'],['caixa',.02,.1,3.4,1.0,.85,-.75,'branco']]},
   personagem:{nome:'Sirene',num:193,olho:'#2f7fe0',garagem:{parede:'#7a1010',fundo:0x200606,piso:0x3a3a3a,anel:0xe3120b,destaque:'#ffd000',luz:0xffe0d0,itens:['cone','barril','cone','pneus','cone','barril','cone','bandeira']}},
   buzina:[196,247],
-  preco:8000,
+  preco:2200,
 };

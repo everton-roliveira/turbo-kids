@@ -1,6 +1,6 @@
 // Turbo Kids · Carro Cometa nº 21 (Hipercarro inglês).
 // modelo: carroceria por seções — corpo [z, meia-largura, base, topo, curvatura], cabine [z, meia-largura, topo, curvatura]; frente = +z.
-// personagem: nome, número, cor dos olhos e a garagem do carro. buzina: duas notas (Hz).
+// personagem: nome, número, cor dos olhos e a garagem do carro. buzina: duas notas (Hz). preco: moedas para comprar.
 export default {
   id:'flecha',
   modelo:{nome:'Flecha',sub:'Hipercarro inglês',cor:'#ff7a00',
@@ -9,4 +9,5 @@ export default {
     teto:[-.5,.3],vidroLat:[-.4,.75],rodas:{f:1.38,t:-1.38},asa:{z:-2.1,y:.98,larg:1.7,corda:.3},farol:'fino',lanterna:'faixa',escape:[[-.18,.62],[.18,.62]],aro:'#3a3d44',pinca:'#d6d9de'},
   personagem:{nome:'Cometa',num:21,olho:'#8a5a2b',garagem:{parede:'#14234a',fundo:0x060b1c,piso:0x161d30,anel:0xff7a00,destaque:'#ff9d2e',luz:0xd9e4ff,itens:['cone','cone','pneus','cone','cone','pneus','cone','cone']}},
   buzina:[523,659],
+  preco:9000,
 };

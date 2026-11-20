@@ -10,5 +10,5 @@ export default {
     extras:[['caixa',.02,.07,4.9,-.99,1.0,-.4,'preto'],['caixa',.02,.07,4.9,.99,1.0,-.4,'preto'],['caixa',.02,.07,4.9,-.99,.62,-.4,'preto'],['caixa',.02,.07,4.9,.99,.62,-.4,'preto']]},
   personagem:{nome:'Amarelinho',num:8,olho:'#8a5a2b',garagem:{parede:'#8a6a10',fundo:0x2a2006,piso:0x3b3324,anel:0xf5c400,destaque:'#1b1b1f',luz:0xfff2cc,itens:['caixa','caixa','cone','caixa','bandeira','caixa','cone','caixa']}},
   buzina:[262,330],
-  preco:5000,
+  preco:500,
 };

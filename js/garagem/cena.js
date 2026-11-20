@@ -4,7 +4,7 @@ import {MODELOS,PERSONAGENS} from '../carros/index.js';
 import {save} from '../nucleo/salvo.js';
 import {camera,retrato} from '../nucleo/render.js';
 import {criarAmbiente} from '../nucleo/ambiente.js';
-import {criarCarro,descartarCarro,enfeiteJogador,piscarSirenes} from '../carros/criar.js';
+import {criarCarro,descartarCarro,enfeiteJogador,piscarSirenes,animarFogoLateral} from '../carros/criar.js';
 import {montarGaragemTema} from './tema.js';
 
 export const garagem={cena:new THREE.Scene(),ang:0.7};
@@ -29,4 +29,6 @@ export function atualizarGaragem(dt){garagem.ang+=dt*0.35;piscarSirenes(garagem.
   const u=garagem.carro.userData;
   for(const p of u.dianteiras)p.rotation.y=Math.sin(garagem.ang*0.7)*0.25;
   // os olhos acompanham a câmera
-  if(u.rosto){vCam.copy(camera.position).normalize();u.rosto.atualizar(dt,vCam.z>0?vCam.x*1.6:0,'normal');}}
+  if(u.rosto){vCam.copy(camera.position).normalize();u.rosto.atualizar(dt,vCam.z>0?vCam.x*1.6:0,'normal');}
+  // o carro mais top solta fogo de vez em quando na garagem
+  if(u.fogoLateral){const t=performance.now()/1000%3;animarFogoLateral(garagem.carro,t<1.1?1.3:0);}}

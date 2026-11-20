@@ -1,6 +1,6 @@
 // Turbo Kids · Carro Rubi nº 7 (Supercarro italiano).
 // modelo: carroceria por seções — corpo [z, meia-largura, base, topo, curvatura], cabine [z, meia-largura, topo, curvatura]; frente = +z.
-// personagem: nome, número, cor dos olhos e a garagem do carro. buzina: duas notas (Hz).
+// personagem: nome, número, cor dos olhos e a garagem do carro. buzina: duas notas (Hz). preco: moedas para comprar.
 export default {
   id:'rosso',
   modelo:{nome:'Rosso',sub:'Supercarro italiano',cor:'#d40000',
@@ -9,4 +9,5 @@ export default {
     teto:[-.75,.4],vidroLat:[-.55,.75],rodas:{f:1.36,t:-1.42},farol:'fino',lanterna:'redonda',entrada:true,escape:[[-.22,.32],[.22,.32]],aro:'#d6d9de',pinca:'#ffd000'},
   personagem:{nome:'Rubi',num:7,olho:'#2f7fe0',garagem:{parede:'#5a1414',fundo:0x1e0808,piso:0x2b1717,anel:0xe3120b,destaque:'#ffd000',luz:0xffe2cc,itens:['pneus','bandeira','caixa','pneus','bandeira','pneus','caixa','bandeira']}},
   buzina:[440,554],
+  preco:5500,
 };

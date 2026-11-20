@@ -1,14 +1,14 @@
 // Turbo Kids · Posição dos carros na tela e moedas girando.
 import {clamp} from '../nucleo/util.js';
 import {TEX} from '../nucleo/texturas.js';
-import {piscarSirenes} from '../carros/criar.js';
+import {piscarSirenes,animarFogoLateral} from '../carros/criar.js';
 import {A,P,amostra} from '../pistas/tracado.js';
 import {corrida} from './estado.js';
 
 export function atualizarVisual(c,dt){
   const m=c.mesh,u=m.userData;piscarSirenes(m,corrida.tCen);
   if(c.estado==='fora'){const t=Math.min(c.tFora,1);amostra(c.prog,A);const d=c.dFora+c.dirFora*t*16;
-    m.position.set(A.x+A.rx*d,3.4*4*t*(1-t),A.z+A.rz*d);m.rotation.y+=dt*9*(1-t*0.7);m.rotation.z=-c.dirFora*0.5*t;m.visible=true;u.fogo.visible=false;
+    m.position.set(A.x+A.rx*d,3.4*4*t*(1-t),A.z+A.rz*d);m.rotation.y+=dt*9*(1-t*0.7);m.rotation.z=-c.dirFora*0.5*t;m.visible=true;u.fogo.visible=false;animarFogoLateral(m,0);
     if(u.rosto)u.rosto.atualizar(dt,0,'tonto');return;}
   amostra(c.prog,A);
   m.position.x=A.x+A.rx*c.d;m.position.z=A.z+A.rz*c.d;
@@ -20,6 +20,7 @@ export function atualizarVisual(c,dt){
   const alvoX=c.alt>0?clamp(-c.valt*0.025,-0.22,0.22):clamp(-(c.accel||0)*0.0015,-0.04,0.04);
   u.chassi.rotation.x+=(alvoX-u.chassi.rotation.x)*Math.min(1,(c.alt>0?8:5)*dt);
   u.fogo.visible=c.turboT>0;if(u.fogo.visible){const k=0.8+Math.random()*0.6;u.fogo.scale.set(1,1,k);}
+  animarFogoLateral(m,c.v<6?0:c.turboT>0?1.9:1);
   m.visible=c.invul>0?Math.floor(c.invul*10)%2===0:true;
   if(u.rosto){const base=c.terminou?(c.ehJogador&&c.posFinal>3?'triste':'feliz'):c.ramT>0?'bravo':c.turboT>0?'feliz':'normal';
     u.rosto.atualizar(dt,-c.alvoVd*0.09,base);}

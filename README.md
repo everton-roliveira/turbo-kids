@@ -17,26 +17,25 @@ Jogo de corrida 3D para celular (Android e iPhone), feito para crianças pequena
 - Uma batida de lado tira o outro carro da pista, e os outros podem fazer o mesmo com você.
 - A buzina faz o carro da frente sair do caminho.
 
-## Personagens
-Seis carros liberados desde o começo, cada um com nome, número e garagem própria:
-
-| Carro | Estilo |
-|---|---|
-| Rubi nº 7 | Supercarro italiano |
-| Trovão nº 33 | Superesportivo bravo |
-| Cometa nº 21 | Hipercarro inglês |
-| Barão nº 4 | Esportivo alemão de pista |
-| Tornado nº 12 | Muscle car de corrida |
-| Floco nº 24 | Carro de corrida de 24 horas |
-
-Carros para comprar com moedas (toque no carro com cadeado na garagem para ver e comprar). Eles também aparecem como adversários:
+## Personagens e loja
+Só o **Pipoca nº 1** vem liberado. Os outros são comprados na garagem com as moedas das corridas (toque no carro com cadeado para ver e comprar). Todos aparecem como adversários nas corridas.
 
 | Carro | Estilo | Preço |
 |---|---|---|
-| Patrulha nº 190 | Carro de polícia com sirene | 3.000 |
-| Amarelinho nº 8 | Ônibus escolar | 5.000 |
-| Sirene nº 193 | Caminhão de bombeiro com escada e sirene | 8.000 |
-| Trilha nº 44 | Jipe de aventura com pneus grandes e estepe | 12.000 |
+| Pipoca nº 1 | Carrinho compacto | grátis |
+| Amarelinho nº 8 | Ônibus escolar | 500 |
+| Patrulha nº 190 | Carro de polícia com sirene | 1.000 |
+| Trilha nº 44 | Jipe de aventura com pneus grandes e estepe | 1.500 |
+| Sirene nº 193 | Caminhão de bombeiro com escada e sirene | 2.200 |
+| Tornado nº 12 | Muscle car de corrida | 3.000 |
+| Barão nº 4 | Esportivo alemão de pista | 4.000 |
+| Rubi nº 7 | Supercarro italiano | 5.500 |
+| Trovão nº 33 | Superesportivo bravo | 7.000 |
+| Cometa nº 21 | Hipercarro inglês | 9.000 |
+| Floco nº 24 | Carro de corrida de 24 horas | 11.000 |
+| Dragão nº 99 | Supercarro lendário: solta fogo pelas laterais (maior no turbo), rodas douradas e neon embaixo | 15.000 |
+
+O administrador tem todos os carros liberados. Quem já jogava antes desta loja continua com os 6 carros que eram grátis.
 
 Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a câmera e mudam de cara na corrida: ficam bravos quando vão bater, tontos quando são jogados para fora, assustados no buraco e felizes no turbo, no pulo e no pódio. Na chegada, a câmera vira para a frente do carro e mostra a carinha feliz ou triste antes do resultado. Dá para desligar as carinhas na garagem.
 

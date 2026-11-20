@@ -1,6 +1,6 @@
 // Turbo Kids · Carro Barão nº 4 (Esportivo alemão de pista).
 // modelo: carroceria por seções — corpo [z, meia-largura, base, topo, curvatura], cabine [z, meia-largura, topo, curvatura]; frente = +z.
-// personagem: nome, número, cor dos olhos e a garagem do carro. buzina: duas notas (Hz).
+// personagem: nome, número, cor dos olhos e a garagem do carro. buzina: duas notas (Hz). preco: moedas para comprar.
 export default {
   id:'gt',
   modelo:{nome:'GT Corrida',sub:'Esportivo alemão de pista',cor:'#a9b0b8',
@@ -9,4 +9,5 @@ export default {
     teto:[-.75,.3],vidroLat:[-.6,.5],rodas:{f:1.3,t:-1.25},asa:{z:-1.85,y:1.4,larg:1.8,corda:.4},farol:'redondo',lanterna:'barra',escape:[[-.1,.3],[.1,.3]],aro:'#2a2c31',pinca:'#e3120b'},
   personagem:{nome:'Barão',num:4,olho:'#4f6478',garagem:{parede:'#d8dce2',fundo:0x9aa1ab,piso:0xb9bec6,anel:0x2a2c31,destaque:'#e3120b',luz:0xffffff,itens:['caixa','pneus','caixa','caixa','pneus','caixa','bandeira','caixa']}},
   buzina:[392,494],
+  preco:4000,
 };

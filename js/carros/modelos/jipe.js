@@ -11,5 +11,5 @@ export default {
       ['caixa',1.3,.06,.1,0,1.95,.1,'carbono']]},
   personagem:{nome:'Trilha',num:44,olho:'#3aa64a',garagem:{parede:'#4a3a24',fundo:0x140e06,piso:0x3a2c1c,anel:0x4f7a2a,destaque:'#ff9d2e',luz:0xffe8c8,itens:['pneus','barril','pneus','pneus','barril','pneus','bandeira','barril']}},
   buzina:[294,370],
-  preco:12000,
+  preco:1500,
 };

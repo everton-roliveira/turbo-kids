@@ -11,5 +11,5 @@ export default {
     extras:[['caixa',1.0,.08,.32,0,1.42,-.45,'carbono'],['caixa',.42,.14,.26,-.25,1.52,-.45,'luzA'],['caixa',.42,.14,.26,.25,1.52,-.45,'luzB']]}),
   personagem:{nome:'Patrulha',num:190,olho:'#3a6fd8',garagem:{parede:'#1a2a55',fundo:0x070c1c,piso:0x1d2433,anel:0x2a4fd0,destaque:'#f2f2f2',luz:0xdde6ff,itens:['cone','cone','caixa','cone','bandeira','cone','caixa','cone']}},
   buzina:[659,880],
-  preco:3000,
+  preco:1000,
 };

@@ -9,6 +9,9 @@ import {GEO,MAT,geosFixas,matAro,matCor,matNumero} from './pecas.js';
 import {geoListras} from './adesivos.js';
 import {criarRosto} from './rosto.js';
 
+// materiais do carro mais top: fogo claro de dentro da chama e neon embaixo
+const fogoBrilho=c=>new THREE.MeshBasicMaterial({color:lin(c),transparent:true,opacity:0.85,blending:THREE.AdditiveBlending,depthWrite:false});
+const MAT_CHAMAS=[fogoBrilho(0xff3a10),fogoBrilho(0xff8a1a),fogoBrilho(0xffe14d)],MAT_NEON=new THREE.MeshBasicMaterial({color:lin(0xb44aff)});
 export function criarCarro(id,cor,numero,enfeite={}){
   const m=MODELOS[id],G=geosModelo(id),fc=G.fc,fcab=G.fcab,proprios=[];
   const raiz=new THREE.Group(),chassi=new THREE.Group();raiz.add(chassi);
@@ -48,6 +51,16 @@ export function criarCarro(id,cor,numero,enfeite={}){
   const fogo=new THREE.Group();
   for(const [x,y] of m.escape){add(chassi,GEO.escape,MAT.cromo,x,y,z0-.03);const f=add(fogo,GEO.fogo,MAT.fogo,x,y,z0-.5);}
   fogo.visible=false;chassi.add(fogo);
+  // fogo saindo pelas laterais (só o carro mais top): escapamento cromado e chamas para fora e para trás
+  let fogoLateral=null;
+  if(m.fogoLateral){fogoLateral=new THREE.Group();const zf=.35,[wf,ybf,ytf]=fc(zf),yf=(ybf+ytf)/2-.04;
+    for(const s of [1,-1]){caixa(chassi,.12,.16,.4,MAT.cromo,s*(wf+.03),yf,zf);
+      const ang=s>0?-1.0:1.0,dx=-Math.sin(ang),dz=-Math.cos(ang);
+      // três chamas (vermelha por fora, amarela por dentro) que tremem e mudam de direção
+      for(const [mat,esc,sobe,gira] of [[MAT_CHAMAS[0],1.9,0.04,0.12],[MAT_CHAMAS[1],1.45,-0.03,-0.1],[MAT_CHAMAS[2],0.95,0.01,0]]){
+        const a=ang+s*gira,ex=-Math.sin(a),ez=-Math.cos(a);
+        const f=add(fogoLateral,GEO.fogo,mat,s*(wf+.1)+ex*.45*esc,yf+sobe,zf+ez*.45*esc);f.rotation.y=a;f.scale.setScalar(esc);f.userData.esc=esc;f.userData.a=a;f.renderOrder=2;}}
+    chassi.add(fogoLateral);}
   // retrovisores
   const zr=m.cabine[m.cabine.length-1][0]-.38,[wr]=fcab(zr),ytr=fc(zr)[2];
   for(const s of [1,-1]){caixa(chassi,.2,.11,.14,tinta,s*(wr+.16),ytr+.13,zr);caixa(chassi,.12,.03,.05,MAT.carbono,s*(wr+.05),ytr+.08,zr);}
@@ -64,7 +77,7 @@ export function criarCarro(id,cor,numero,enfeite={}){
     if(!a.baixa){const h=a.y-yt+.05;for(const s of [1,-1])caixa(chassi,.05,h,.14,MAT.carbono,s*a.larg*.28,yt+h/2-.05,a.z);}}
   // peças a mais (escada, sirenes, estepe, para-choque de jipe...)
   let sirenes=null;
-  if(m.extras){const mats={tinta,carbono:MAT.carbono,cromo:MAT.cromo,branco:matCor('#f2f2f2'),preto:matCor('#1b1b1f')};
+  if(m.extras){const mats={tinta,carbono:MAT.carbono,cromo:MAT.cromo,branco:matCor('#f2f2f2'),preto:matCor('#1b1b1f'),neon:MAT_NEON};
     if(m.extras.some(e=>e[7]==='luzA')){sirenes={a:new THREE.MeshBasicMaterial({color:0xff2020}),b:new THREE.MeshBasicMaterial({color:0x2060ff})};proprios.push(sirenes.a,sirenes.b);
       mats.luzA=sirenes.a;mats.luzB=sirenes.b;}
     for(const [tipo,sx,sy,sz,x,y,z,mk] of m.extras){
@@ -90,12 +103,15 @@ export function criarCarro(id,cor,numero,enfeite={}){
   // olhos e boca (personagem)
   const rosto=enfeite.rosto?criarRosto(id,chassi,cor,proprios):null;
   const so=add(raiz,GEO.sombra,MAT.sombra,0,0.02,0);so.renderOrder=-1;
-  raiz.userData={tinta,rodas,dianteiras,chassi,fogo,proprios,rosto,sirenes};
+  raiz.userData={tinta,rodas,dianteiras,chassi,fogo,fogoLateral,proprios,rosto,sirenes};
   return raiz;
 }
 export function descartarCarro(c){const u=c&&c.userData;if(!u)return;u.tinta.dispose();for(const o of u.proprios||[])o.dispose();
   c.traverse(o=>{if(o.geometry&&!geosFixas.has(o.geometry)&&!Object.values(geoCache).some(g=>g.corpo===o.geometry||g.cab===o.geometry||(g.parabrisa&&g.parabrisa.geo===o.geometry)||(g.boca&&g.boca.geo===o.geometry)))o.geometry.dispose();});}
 export const enfeiteJogador=()=>({adesivo:save.adesivo,aro:save.aro,nome:nomeJogador().toUpperCase(),rosto:save.rosto});
+// fogo das laterais: chamas tremendo; forca 0 apaga, 1 normal, maior no turbo
+export function animarFogoLateral(carro,forca){const g=carro.userData.fogoLateral;if(!g)return;g.visible=forca>0;if(!forca)return;
+  for(const f of g.children){const e=f.userData.esc,k=forca*(0.6+Math.random()*0.7);f.scale.set(e*(0.8+Math.random()*0.4),e,e*k);f.rotation.y=f.userData.a+(Math.random()-0.5)*0.15;}}
 export function piscarSirenes(carro,t){const s=carro.userData.sirenes;if(!s)return;const f=Math.floor(t*5)%2;
   s.a.color.setHex(f?0xff2020:0x3a0808);s.b.color.setHex(f?0x0a1440:0x2060ff);}
 export function pintar(carro,cor){carro.userData.tinta.color.copy(lin(cor));if(carro.userData.rosto)carro.userData.rosto.cor=cor;}

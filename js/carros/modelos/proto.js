@@ -1,6 +1,6 @@
 // Turbo Kids · Carro Floco nº 24 (Carro de corrida de 24 horas).
 // modelo: carroceria por seções — corpo [z, meia-largura, base, topo, curvatura], cabine [z, meia-largura, topo, curvatura]; frente = +z.
-// personagem: nome, número, cor dos olhos e a garagem do carro. buzina: duas notas (Hz).
+// personagem: nome, número, cor dos olhos e a garagem do carro. buzina: duas notas (Hz). preco: moedas para comprar.
 export default {
   id:'proto',
   modelo:{nome:'Protótipo',sub:'Carro de corrida de 24 horas',cor:'#f2f2f2',
@@ -9,4 +9,5 @@ export default {
     teto:[-.6,.2],vidroLat:[-.5,.5],rodas:{f:1.5,t:-1.5},asa:{z:-2.2,y:1.0,larg:2.0,corda:.42},aleta:true,farol:'fino',lanterna:'barra',escape:[[0,.5]],aro:'#2a2c31',pinca:'#ffd000'},
   personagem:{nome:'Floco',num:24,olho:'#1fb6c9',garagem:{parede:'#0b0f16',fundo:0x020306,piso:0x10141b,anel:0x19e0d0,destaque:'#19e0d0',luz:0xd6fbff,itens:['cone','pneus','cone','bandeira','cone','pneus','cone','bandeira']}},
   buzina:[587,740],
+  preco:11000,
 };
