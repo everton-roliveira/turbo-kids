@@ -1,0 +1,34 @@
+import campoVerde from './campo-verde.js';
+import praia from './praia.js';
+import deserto from './deserto.js';
+import cidade from './cidade.js';
+import neve from './neve.js';
+import noite from './noite.js';
+import terraDosDoces from './terra-dos-doces.js';
+import valeDosDinossauros from './vale-dos-dinossauros.js';
+import lua from './lua.js';
+import fazenda from './fazenda.js';
+import reinoEncantado from './reino-encantado.js';
+import ilhaDosPiratas from './ilha-dos-piratas.js';
+import florestaDosCogumelos from './floresta-dos-cogumelos.js';
+import poloSul from './polo-sul.js';
+import canteiroDeObras from './canteiro-de-obras.js';
+import parqueDeDiversoes from './parque-de-diversoes.js';
+import fundoDoMar from './fundo-do-mar.js';
+import safari from './safari.js';
+import cidadeDoFuturo from './cidade-do-futuro.js';
+import jardimDasCerejeiras from './jardim-das-cerejeiras.js';
+import quartoDeBrinquedos from './quarto-de-brinquedos.js';
+import ceuDasNuvens from './ceu-das-nuvens.js';
+import jardimDasJoaninhas from './jardim-das-joaninhas.js';
+import vilaDoNatal from './vila-do-natal.js';
+import estacaoDeTrem from './estacao-de-trem.js';
+import montanhaDeFogo from './montanha-de-fogo.js';
+import estadioDeFutebol from './estadio-de-futebol.js';
+import planetaAlienigena from './planeta-alienigena.js';
+import festaDosLanches from './festa-dos-lanches.js';
+import aeroporto from './aeroporto.js';
+
+// ordem das pistas (pista 1 = primeira da lista); para criar uma pista nova, faça um arquivo nesta pasta e coloque aqui
+export const TEMAS=[campoVerde,praia,deserto,cidade,neve,noite,terraDosDoces,valeDosDinossauros,lua,fazenda,reinoEncantado,ilhaDosPiratas,florestaDosCogumelos,poloSul,canteiroDeObras,parqueDeDiversoes,fundoDoMar,safari,cidadeDoFuturo,jardimDasCerejeiras,quartoDeBrinquedos,ceuDasNuvens,jardimDasJoaninhas,vilaDoNatal,estacaoDeTrem,montanhaDeFogo,estadioDeFutebol,planetaAlienigena,festaDosLanches,aeroporto];
+export const temaDoNivel=n=>TEMAS[(n-1)%TEMAS.length];

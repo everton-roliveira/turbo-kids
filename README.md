@@ -95,21 +95,36 @@ A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois d
 - Comemoração com confete e fogos no pódio.
 
 ## Técnico
-- [Three.js](https://threejs.org/) r128, sem build: `index.html` (telas), `css/jogo.css` e os scripts em `js/`, carregados em ordem e dividindo o mesmo escopo:
+- [Three.js](https://threejs.org/) r128, sem build. O código está em ES modules (`import`/`export`) dentro de `js/`, e o `index.html` carrega só o `js/main.js`:
 
-  | Arquivo | O que tem |
-  |---|---|
-  | `dados.js` | Funções básicas, carros, personagens, progresso salvo, cenários (`TEMAS`), dificuldade e oficina |
-  | `audio.js` | Som, música e voz |
-  | `render.js` | Renderização, qualidade gráfica e texturas |
-  | `carros.js` | Rosto dos carros e carroceria |
-  | `garagem.js` | Garagem 3D de cada personagem |
-  | `pista.js` | Traçado, túnel, ponte e cenário em volta da pista |
-  | `cenarios.js` | Objetos dos cenários das pistas 7 em diante |
-  | `corrida.js` | Obstáculos, corrida, física, adversários e câmera |
-  | `interface.js` | Tutorial, comemoração, telas, garagem, controles e instalação |
-  | `principal.js` | Tamanho da tela e loop principal |
-- Ao mudar arquivos, aumente `CACHE` em `sw.js` (e inclua arquivos novos na lista).
+  ```
+  js/
+    main.js                ponto de entrada: loop do jogo
+    nucleo/                util, progresso salvo, renderizador e tela, qualidade gráfica, texturas, app/tela cheia
+    audio/
+      som.js               contexto de áudio, motor e sons básicos
+      efeitos/             um arquivo por efeito (batida, buzina, moeda, turbo, vitória...)
+      musica.js            toca as músicas
+      musicas/             um arquivo por música (aventura, tropical, pirata, natal...)
+      voz.js               voz em português
+    carros/
+      index.js             lista dos carros (ordem da garagem)
+      modelos/             um arquivo por carro: carroceria, personagem, garagem, buzina e preço
+      geometria.js, rosto.js, pecas.js, adesivos.js, criar.js
+    pistas/
+      temas/index.js       lista das pistas em ordem
+      temas/               um arquivo por pista: cores, música e decorar() com os objetos do cenário
+      tracado.js, tunel.js, ponte.js, cenario.js, ferramentas.js, animacao.js, dificuldade.js, escolha.js
+    corrida/               estado, início, obstáculos, física, jogador, adversários (ia), câmera, placar, visual
+    garagem/               cena 3D, garagem de cada personagem, painel, oficina e opções
+    interface/             tutorial, comemoração, resultado/pausa, álbum, mapa, controles, inclinação, instalar
+  ```
+
+- Para criar um carro: copie um arquivo de `js/carros/modelos/`, mude o `id`, o modelo e o personagem, e coloque o import em `js/carros/index.js`. Com `preco`, ele aparece com cadeado na loja.
+- Para criar uma pista: copie um arquivo de `js/pistas/temas/`, mude as cores, a música e o `decorar()` (as ferramentas estão em `js/pistas/ferramentas.js`), e coloque o import em `js/pistas/temas/index.js`. A dificuldade se redistribui sozinha.
+- Para criar uma música: copie um arquivo de `js/audio/musicas/` e importe na pista que vai usar.
+- Variáveis que mudam de valor e são usadas em vários módulos (`modo`, `save`, `corrida`, `P`, `tremor`) são trocadas pelas funções `mudarModo`, `trocarSave`, `definirCorrida`, `usarPista` e `definirTremor`.
+- Ao mudar arquivos, aumente `CACHE` em `sw.js` e inclua os arquivos novos na lista `JS`.
 - `manifest.webmanifest` + `sw.js`: dá para instalar como app e jogar sem internet.
 - A qualidade gráfica baixa sozinha se o celular não aguentar (tira as sombras e depois reduz a resolução).
 - O progresso fica salvo no próprio aparelho (`localStorage`).
