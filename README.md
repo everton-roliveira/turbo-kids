@@ -74,7 +74,8 @@ A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois d
 - Desvio no turbo (liga e desliga na garagem, começa desligado): durante o turbo, do botão ou da faixa azul, se a criança não estiver virando, o carro desvia sozinho das placas. Fora do turbo, quem vira é a criança.
 - Os adversários não tentam bater nos primeiros 8 segundos, e até a pista 4 a batida deles só empurra.
 - Quem está muito na frente diminui um pouco a velocidade.
-- Música e comemoração com confete e fogos no pódio.
+- Cada cenário tem a sua música, gerada pelo próprio jogo (praia tropical, pirata em 6/8, circo, Natal com sininhos, espaço calmo na Lua...).
+- Comemoração com confete e fogos no pódio.
 
 ## Técnico
 - [Three.js](https://threejs.org/) r128, sem build: `index.html` (telas), `css/jogo.css` e os scripts em `js/`, carregados em ordem e dividindo o mesmo escopo:

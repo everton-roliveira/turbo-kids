@@ -352,7 +352,7 @@ function atualizarCorrida(dt){
     if(n!==corrida.ultimoNum){corrida.ultimoNum=n;
       if(n>0){ct.textContent=n;ct.className='';Som.bip(440,0.18,0.15);Voz.falar(['','Um','Dois','Três'][n]||String(n),{urgente:true});}
       else{ct.textContent='VAI!';ct.className='vai';Som.bip(880,0.4,0.18);Voz.falar(comNome('Vai{n}!'),{urgente:true});}}
-    if(corrida.contagem<=0){modo='corrida';Musica.iniciar();setTimeout(()=>{if(modo!=='contagem')ct.hidden=true;},700);}
+    if(corrida.contagem<=0){modo='corrida';Musica.iniciar(corrida.tema.musica);setTimeout(()=>{if(modo!=='contagem')ct.hidden=true;},700);}
     Som.motorAtualizar(0,true,false);atualizarCamera(dt,false);if(corrida.tut)Tutorial.atualizar(corrida.tut,0);return;
   }
   for(const c of corrida.carros){if(c.estado!=='normal')continue;if(c.ia)controlarIA(c,dt);else controlarJogador(c);}
