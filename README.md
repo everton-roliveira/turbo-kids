@@ -56,10 +56,10 @@ A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois d
 ## Para crianças pequenas
 - Uma voz fala em português: contagem, "turbo pronto", posição e resultado (dá para desligar).
 - A primeira corrida mostra uma mãozinha apontando cada botão.
-- Dificuldade pensada para 5 anos: adversários mais lentos que o carro da criança, poucos buracos e placas, curvas que quase não empurram.
-- Ajuda na direção (liga e desliga na garagem): se a criança não estiver virando, o carro desvia sozinho das placas.
-- Os adversários não tentam bater nos primeiros segundos, e até a pista 4 a batida deles só empurra.
-- Quem está muito na frente diminui a velocidade, para a corrida não ficar frustrante.
+- Dificuldade pensada para crianças: sobe um pouco a cada pista, desde a primeira, e tem um limite.
+- Desvio no turbo (liga e desliga na garagem, começa desligado): durante o turbo, do botão ou da faixa azul, se a criança não estiver virando, o carro desvia sozinho das placas. Fora do turbo, quem vira é a criança.
+- Os adversários não tentam bater nos primeiros 8 segundos, e até a pista 4 a batida deles só empurra.
+- Quem está muito na frente diminui um pouco a velocidade.
 - Música e comemoração com confete e fogos no pódio.
 
 ## Técnico

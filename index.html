@@ -212,13 +212,14 @@ body.inclinar #bEsq,body.inclinar #bDir{display:none}
       <button id="gVoz" class="chip" aria-pressed="true">🗣️ Voz</button>
       <button id="gAuto" class="chip" aria-pressed="false">Acelerar sozinho</button>
       <button id="gRosto" class="chip" aria-pressed="true">😀 Carinhas</button>
-      <button id="gAjuda" class="chip" aria-pressed="true">🛟 Ajuda na direção</button>
+      <button id="gAjuda" class="chip" aria-pressed="false">🛟 Desvio no turbo</button>
       <button id="gInclinar" class="chip" aria-pressed="false">📱 Virar inclinando</button>
       <button id="gInstalar" class="chip" hidden>📲 Instalar o jogo</button>
     </div>
+    <p class="como">🛟 Desvio no turbo: quando ligado, o carro desvia sozinho das placas só enquanto estiver no turbo (do botão ou da faixa azul). Fora do turbo, quem vira é você.</p>
     <p class="como" id="gDicaInstalar" hidden></p>
     <button id="gZerar" class="link">Recomeçar do zero</button>
-    <small class="versao">Turbo Kids · versão 10</small>
+    <small class="versao">Turbo Kids · versão 11</small>
   </div>
 </div>
 
@@ -336,7 +337,7 @@ const PERSONAGENS={
 /* ================= Progresso salvo ================= */
 const CHAVE='corrida-turbo-v1';
 const PADRAO=()=>({moedas:0,nivel:1,cor:'#d40000',modelo:'rosso',up:{motor:0,acel:0,amort:0,pneu:0},auto:false,som:true,
-  musica:true,voz:true,ajuda:true,tutorial:false,adesivo:'nenhum',aro:null,nome:'',inclinar:false,trofeus:{},qualidade:null,rosto:true});
+  musica:true,voz:true,desvioTurbo:false,tutorial:false,adesivo:'nenhum',aro:null,nome:'',inclinar:false,trofeus:{},qualidade:null,rosto:true});
 let save=PADRAO();
 try{const s=JSON.parse(localStorage.getItem(CHAVE)||'null');if(s){save=Object.assign(PADRAO(),s);save.up=Object.assign(PADRAO().up,s.up||{});
   if(!save.trofeus||typeof save.trofeus!=='object')save.trofeus={};}}catch(e){}
@@ -373,12 +374,12 @@ const AROS=[['#d6d9de','Prata'],['#2a2c31','Preto'],['#d4a017','Dourado'],['#f2f
 /* cada carro tem sua buzina (duas notas) */
 const BUZINAS={rosso:[440,554],touro:[330,415],flecha:[523,659],gt:[392,494],v8:[220,277],proto:[587,740]};
 function paramsNivel(n){return{
-  // dificuldade pensada para criança pequena: sobe devagar e tem teto baixo
-  aiVmax:Math.min(37+n*2,62),
-  buracos:Math.min(2+n,12),
-  bloqueios:Math.min(1+Math.floor(n/2),7),
-  drift:Math.min(0.04+n*0.02,0.25),
-  agressao:Math.min(0.04+n*0.03,0.3),
+  // dificuldade para criança: sobe devagar desde a pista 1 e tem teto
+  aiVmax:Math.min(45+n*2,66),
+  buracos:Math.min(3+n,13),
+  bloqueios:Math.min(2+Math.floor(n/2),8),
+  drift:Math.min(0.06+n*0.02,0.27),
+  agressao:Math.min(0.08+n*0.03,0.34),
   desvio:Math.min(0.5+n*0.06,0.95),
   voltas:2};}
 function statsJogador(){const u=save.up;return{
@@ -1275,8 +1276,8 @@ function controlarJogador(c){
   let steer=(entrada.dir?1:0)-(entrada.esq?1:0);
   if(save.inclinar&&!steer)steer=entrada.incl;
   c.alvoVd=steer*c.lat*Math.min(1,0.4+c.v/25);
-  // ajuda na direção: sem a criança virar, o carro desvia sozinho das placas de interdição
-  if(!steer&&save.ajuda){const s=mod(c.prog,P.L);
+  // desvio no turbo (opção da garagem): só durante o turbo, de botão ou de faixa, e sem a criança virar
+  if(!steer&&save.desvioTurbo&&c.turboT>0){const s=mod(c.prog,P.L);
     for(const b of corrida.obs.bloqueios){const a=mod(b.s-s,P.L);
       if(a>2&&a<30+c.v*0.9&&Math.abs(c.d-b.d)<4.2){
         const livre=FAIXAS.filter(f=>Math.abs(f-b.d)>=4.5).sort((x,y)=>Math.abs(x-c.d)-Math.abs(y-c.d))[0];
@@ -1295,16 +1296,16 @@ function controlarIA(c,dt){
         if(a>2&&a<18&&Math.abs(o.d-f)<2.5&&o.v<c.v-3)k+=4;}
       if(k<menor){menor=k;melhor=f;}}
     c.faixaAlvo=melhor;
-    if(!c.ehJogador&&c.ramT<=0&&j.estado==='normal'&&j.invul<=0&&!j.terminou&&!corrida.tut&&corrida.t>15){
+    if(!c.ehJogador&&c.ramT<=0&&j.estado==='normal'&&j.invul<=0&&!j.terminou&&!corrida.tut&&corrida.t>8){
       const ds=difProg(j,c),dd=j.d-c.d;
       if(Math.abs(ds)<3.2&&Math.abs(dd)<6&&Math.abs(dd)>1.5&&Math.random()<p.agressao*0.25)c.ramT=0.8;}
   }
   if(c.ramT>0&&j.estado==='normal'){c.ramT-=dt;c.alvoVd=Math.sign(j.d-c.d)*c.latRam;}
   else{c.ramT=0;c.alvoVd=clamp((c.faixaAlvo-c.d)*2.6,-c.lat,c.lat);}
   c.acelerando=true;
-  // ajuda: quem está muito na frente do jogador alivia, quem ficou para trás acelera um pouco
+  // quem está muito na frente do jogador alivia um pouco, quem ficou para trás acelera um pouco
   c.multV=1;if(!c.ehJogador){const diff=c.prog-j.prog,forca=corrida.nivel<=5?1:0.8;
-    if(diff>12)c.multV=1-Math.min(0.35,(diff-12)/140)*forca;else if(diff<-30)c.multV=1+Math.min(0.1,(-diff-30)/250);}
+    if(diff>20)c.multV=1-Math.min(0.15,(diff-20)/200)*forca;else if(diff<-30)c.multV=1+Math.min(0.1,(-diff-30)/250);}
 }
 function fisica(c,dt){
   if(c.estado==='fora'){c.tFora+=dt;if(c.tFora>2){c.estado='normal';c.d=0;c.vd=0;c.v=0;c.invul=2;c.faixaAlvo=0;c.alt=0;c.valt=0;c.mesh.rotation.set(0,0,0);}return;}
@@ -1589,7 +1590,7 @@ function renderGaragem(){
   chip(save.voz?'🗣️ Voz ligada':'🗣️ Voz desligada',save.voz)($('#gVoz'));
   chip('Acelerar sozinho: '+(save.auto?'sim':'não'),save.auto)($('#gAuto'));
   chip('😀 Carinhas: '+(save.rosto?'sim':'não'),save.rosto)($('#gRosto'));
-  chip('🛟 Ajuda na direção: '+(save.ajuda?'sim':'não'),save.ajuda)($('#gAjuda'));
+  chip('🛟 Desvio no turbo: '+(save.desvioTurbo?'sim':'não'),save.desvioTurbo)($('#gAjuda'));
   chip(save.inclinar?'📱 Virar inclinando: sim':'📱 Virar inclinando: não',save.inclinar)($('#gInclinar'));
   const n=Object.keys(save.trofeus).length;$('#gAlbum').textContent='🏆 Álbum'+(n?' ('+n+')':'');
 }
@@ -1622,7 +1623,7 @@ $('#gSom').addEventListener('click',()=>{save.som=!save.som;salvar();Som.ligar(s
 $('#gMusica').addEventListener('click',()=>{save.musica=!save.musica;salvar();renderGaragem();});
 $('#gVoz').addEventListener('click',()=>{save.voz=!save.voz;salvar();renderGaragem();if(save.voz)Voz.falar('Oi! Eu vou falar com você na corrida!',{urgente:true});});
 $('#gAuto').addEventListener('click',()=>{save.auto=!save.auto;salvar();renderGaragem();});
-$('#gAjuda').addEventListener('click',()=>{save.ajuda=!save.ajuda;salvar();renderGaragem();});
+$('#gAjuda').addEventListener('click',()=>{save.desvioTurbo=!save.desvioTurbo;salvar();renderGaragem();});
 $('#gRosto').addEventListener('click',()=>{save.rosto=!save.rosto;salvar();trocarCarroGaragem();renderGaragem();
   const r=garagem.carro.userData.rosto;if(r)r.reagir('feliz',1.5);});
 $('#gInclinar').addEventListener('click',async()=>{
