@@ -1,7 +1,7 @@
 // Guarda o jogo no celular para abrir sem internet.
 // Arquivos do próprio jogo: busca sempre a versão nova (sem o cache de 10 min do GitHub Pages) e usa o cache só sem internet.
 // Three.js, fontes e ícones de fora: vêm do cache.
-const CACHE = 'turbo-kids-v21';
+const CACHE = 'turbo-kids-v22';
 // todos os módulos do jogo (gerado a partir da pasta js/)
 const JS = [
   './js/anuncios/admin.js',
@@ -71,6 +71,14 @@ const JS = [
   './js/carros/modelos/touro.js',
   './js/carros/modelos/v8.js',
   './js/carros/pecas.js',
+  './js/carros/rodas/aventura.js',
+  './js/carros/rodas/dourada.js',
+  './js/carros/rodas/esportiva.js',
+  './js/carros/rodas/estrela.js',
+  './js/carros/rodas/index.js',
+  './js/carros/rodas/neon.js',
+  './js/carros/rodas/original.js',
+  './js/carros/rodas/util.js',
   './js/carros/rosto.js',
   './js/corrida/acoes.js',
   './js/corrida/atualizar.js',
@@ -84,6 +92,7 @@ const JS = [
   './js/corrida/obstaculos.js',
   './js/corrida/visual.js',
   './js/garagem/cena.js',
+  './js/garagem/loja.js',
   './js/garagem/oficina.js',
   './js/garagem/opcoes.js',
   './js/garagem/painel.js',

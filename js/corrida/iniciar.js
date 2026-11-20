@@ -12,6 +12,7 @@ import {Musica} from '../audio/musica.js';
 import {CORES_EXTRA} from '../garagem/opcoes.js';
 import {statsJogador} from '../garagem/oficina.js';
 import {criarCarro,enfeiteJogador} from '../carros/criar.js';
+import {RODAS} from '../carros/rodas/index.js';
 import {P,construirPista,usarPista} from '../pistas/tracado.js';
 import {temaDoNivel} from '../pistas/temas/index.js';
 import {pistaAtual} from '../pistas/escolha.js';
@@ -47,7 +48,8 @@ export function iniciarCorrida(){
     const eh=i===vagaJogador;let modelo,cor;
     if(eh){modelo=save.modelo;cor=save.cor;}
     else{modelo=rivais.pop();cor=MODELOS[modelo].cor;if(usadas.has(cor.toLowerCase()))cor=extras.find(c=>!usadas.has(c.toLowerCase()));usadas.add(cor.toLowerCase());}
-    const mesh=criarCarro(modelo,cor,PERSONAGENS[modelo].num,eh?enfeiteJogador():{rosto:save.rosto});cena.add(mesh);
+    // adversários usam rodas sorteadas (mostra as rodas da loja)
+    const mesh=criarCarro(modelo,cor,PERSONAGENS[modelo].num,eh?enfeiteJogador():{rosto:save.rosto,roda:RODAS[Math.floor(P.rnd()*RODAS.length)].id});cena.add(mesh);
     const c={mesh,modelo,cor,ehJogador:eh,ia:!eh,prog:-6-Math.floor(i/2)*9,d:i%2?4:-4,vd:0,v:0,alvoVd:0,acelerando:false,multV:1,
       estado:'normal',tFora:0,dFora:0,dirFora:1,invul:0,lento:0,turboT:0,turboCarga:30,terminou:false,pulo:0,tBuraco:0,
       alt:0,valt:0,tRampa:0,tPad:0,

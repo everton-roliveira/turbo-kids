@@ -43,10 +43,10 @@ h2{margin:0 0 6px;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;
 .modelo b em{font-style:normal;font-size:.72rem;font-weight:800;background:#fafafa;color:#111;border-radius:999px;padding:0 6px;vertical-align:2px}
 .modelo small{display:block;color:var(--suave);font-size:.78rem;line-height:1.1}
 .modelo[aria-pressed="true"]{border-color:var(--ouro);background:#332d1c}
-.modelo .preco{display:block;margin-top:3px;color:var(--ouro);font-weight:800;font-size:.85rem;line-height:1.1}
-.modelo .preco:empty{display:none}
-.modelo .preco.caro{color:var(--suave)}
-.modelo .preco.livre{color:#7bd85a}
+.preco{display:block;margin-top:3px;color:var(--ouro);font-weight:800;font-size:.85rem;line-height:1.1}
+.preco:empty{display:none}
+.preco.caro{color:var(--suave)}
+.preco.livre{color:#7bd85a}
 .modelo.travado b{opacity:.8}
 .bt-anuncio{display:block;width:100%;margin-top:8px;background:#1d3a5c;border:2px solid #4fa3ff;color:#dff0ff;border-radius:16px;padding:10px 12px 7px;font-weight:800;font-size:1.05rem}
 .bt-anuncio:disabled{opacity:.5}
@@ -188,3 +188,9 @@ body.inclinar #bEsq,body.inclinar #bDir{display:none}
 .mapa .selo:disabled{opacity:.4;cursor:default}
 @media (prefers-reduced-motion:reduce){.turbo.pronto{animation:none;box-shadow:0 0 14px 4px rgba(255,194,26,.6)}#aviso.mostra{animation-duration:1.8s}
   #dica span,.medalha.gira,.hud-moedas.pega{animation:none}}
+
+/* adesivos e rodas à venda */
+.itens{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.item{background:var(--painel-2);border:2px solid var(--linha);border-radius:12px;padding:7px 10px 5px;text-align:left}
+.item b{display:block;font-size:.98rem;line-height:1.1}
+.item[aria-pressed="true"]{border-color:var(--ouro);background:#332d1c}

@@ -4,7 +4,7 @@ import {MODELOS,PERSONAGENS} from '../carros/index.js';
 import {save} from '../nucleo/salvo.js';
 import {camera,retrato} from '../nucleo/render.js';
 import {criarAmbiente} from '../nucleo/ambiente.js';
-import {criarCarro,descartarCarro,enfeiteJogador,piscarSirenes,animarFogoLateral} from '../carros/criar.js';
+import {criarCarro,descartarCarro,enfeiteJogador,piscarSirenes,animarFogoLateral,animarRodas} from '../carros/criar.js';
 import {montarGaragemTema} from './tema.js';
 
 export const garagem={cena:new THREE.Scene(),ang:0.7};
@@ -20,11 +20,13 @@ export const garagem={cena:new THREE.Scene(),ang:0.7};
 export const carroNaGaragem=()=>garagem.previa||save.modelo;
 export function trocarCarroGaragem(){if(garagem.carro){garagem.cena.remove(garagem.carro);descartarCarro(garagem.carro);}
   const id=carroNaGaragem();if(garagem.temaId!==id)montarGaragemTema(id);
-  garagem.carro=criarCarro(id,garagem.previa?MODELOS[id].cor:save.cor,PERSONAGENS[id].num,enfeiteJogador());garagem.cena.add(garagem.carro);}
+  // adesivo ou roda que está só sendo olhado (ainda não comprado) aparece no carro
+  const enf=enfeiteJogador();if(garagem.previaItem)enf[garagem.previaItem.tipo]=garagem.previaItem.id;
+  garagem.carro=criarCarro(id,garagem.previa?MODELOS[id].cor:save.cor,PERSONAGENS[id].num,enf);garagem.cena.add(garagem.carro);}
 trocarCarroGaragem();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{garagem.temaId=null;trocarCarroGaragem();});
 export const vCam=new THREE.Vector3();
-export function atualizarGaragem(dt){garagem.ang+=dt*0.35;piscarSirenes(garagem.carro,performance.now()/1000);const r=retrato?9.5:8.5;
+export function atualizarGaragem(dt){garagem.ang+=dt*0.35;piscarSirenes(garagem.carro,performance.now()/1000);animarRodas(garagem.carro,performance.now()/1000,dt);const r=retrato?9.5:8.5;
   camera.position.set(Math.sin(garagem.ang)*r,2.6,Math.cos(garagem.ang)*r);camera.lookAt(0,0.6,0);
   const u=garagem.carro.userData;
   for(const p of u.dianteiras)p.rotation.y=Math.sin(garagem.ang*0.7)*0.25;

@@ -42,7 +42,10 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 
 ## Garagem
 - Cada personagem tem a sua garagem, com cores, objetos e o nome na parede.
-- 12 cores, adesivos (raio, chamas, estrelas, listras), cor das rodas e o nome da criança na placa.
+- 12 cores (grátis) e o nome da criança na placa.
+- Adesivos à venda: Raio 300, Chamas 600, Estrelas 900, Listras 1.200.
+- Rodas à venda (cada uma em `js/carros/rodas/`): Original grátis, Esportiva 500 (10 raios pretos e vermelho), Estrela 1.000 (5 raios cromados), Aventura 1.800 (off-road com parafusos e anel vermelho), Dourada 3.000 (raios dourados e porca vermelha) e **Neon 6.000**: anéis de luz que trocam de cor e um rotor cromado que gira sozinho, mesmo parado.
+- Tocar num adesivo ou roda que ainda não é seu mostra no carro e oferece para comprar. O administrador tem todos liberados. Os adversários aparecem com rodas sorteadas.
 - Oficina com 4 melhorias: motor, aceleração, amortecedor e pneus.
 - Álbum de troféus com a melhor posição em cada pista.
 

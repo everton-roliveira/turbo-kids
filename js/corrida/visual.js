@@ -1,12 +1,12 @@
 // Turbo Kids · Posição dos carros na tela e moedas girando.
 import {clamp} from '../nucleo/util.js';
 import {TEX} from '../nucleo/texturas.js';
-import {piscarSirenes,animarFogoLateral} from '../carros/criar.js';
+import {piscarSirenes,animarFogoLateral,animarRodas} from '../carros/criar.js';
 import {A,P,amostra} from '../pistas/tracado.js';
 import {corrida} from './estado.js';
 
 export function atualizarVisual(c,dt){
-  const m=c.mesh,u=m.userData;piscarSirenes(m,corrida.tCen);
+  const m=c.mesh,u=m.userData;piscarSirenes(m,corrida.tCen);animarRodas(m,corrida.tCen,dt);
   if(c.estado==='fora'){const t=Math.min(c.tFora,1);amostra(c.prog,A);const d=c.dFora+c.dirFora*t*16;
     m.position.set(A.x+A.rx*d,3.4*4*t*(1-t),A.z+A.rz*d);m.rotation.y+=dt*9*(1-t*0.7);m.rotation.z=-c.dirFora*0.5*t;m.visible=true;u.fogo.visible=false;animarFogoLateral(m,0);
     if(u.rosto)u.rosto.atualizar(dt,0,'tonto');return;}

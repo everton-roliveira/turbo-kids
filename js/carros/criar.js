@@ -8,6 +8,7 @@ import {geoCache,geosModelo} from './geometria.js';
 import {GEO,MAT,geosFixas,matAro,matCor,matNumero} from './pecas.js';
 import {geoListras} from './adesivos.js';
 import {criarRosto} from './rosto.js';
+import {RODA} from './rodas/index.js';
 
 // materiais do carro mais top: fogo claro de dentro da chama e neon embaixo
 const fogoBrilho=c=>new THREE.MeshBasicMaterial({color:lin(c),transparent:true,opacity:0.85,blending:THREE.AdditiveBlending,depthWrite:false});
@@ -22,13 +23,14 @@ export function criarCarro(id,cor,numero,enfeite={}){
   add(chassi,G.cab,[tinta,MAT.vidro],0,0,0,true);
   const z0=m.corpo[0][0],z1=m.corpo[m.corpo.length-1][0];
   const [w0,yb0,yt0]=fc(z0),yc0=(yb0+yt0)/2;
-  // rodas
+  // rodas (modelo escolhido na garagem; os da pasta carros/rodas/)
+  const roda=RODA[enfeite.roda]||RODA.original,rodaAnim={neons:[],rotores:[],proprios};
   const re=m.rodaEsc||1,rodas=[],dianteiras=[],R=0.35*re,X=0.86;
   for(const [zz,frente] of [[m.rodas.f,true],[m.rodas.t,false]])for(const lado of [1,-1]){
     const piv=new THREE.Group();piv.position.set(lado*X,R,zz);raiz.add(piv);
     const esp=new THREE.Group();esp.scale.set(lado*re,re,re);piv.add(esp);
     const gira=new THREE.Group();esp.add(gira);
-    add(gira,GEO.pneu,MAT.pneu,0,0,0,true);add(gira,GEO.aro,matAro(enfeite.aro||m.aro),0,0,0);add(gira,GEO.disco,MAT.disco,0,0,0);
+    add(gira,GEO.pneu,MAT.pneu,0,0,0,true);roda.criar({gira,esp,m,enfeite,add:(p,g,mt)=>add(p,g,mt,0,0,0),anim:rodaAnim});add(gira,GEO.disco,MAT.disco,0,0,0);
     add(esp,GEO.pinca,matCor(m.pinca),0.05,0.13,-0.12);
     rodas.push(gira);if(frente)dianteiras.push(piv);
     const w=fc(zz)[0];
@@ -82,7 +84,7 @@ export function criarCarro(id,cor,numero,enfeite={}){
       mats.luzA=sirenes.a;mats.luzB=sirenes.b;}
     for(const [tipo,sx,sy,sz,x,y,z,mk] of m.extras){
       if(tipo==='estepe'){const p=new THREE.Group();p.position.set(x,y,z);p.rotation.y=Math.PI/2;p.scale.setScalar(re);chassi.add(p);
-        add(p,GEO.pneu,MAT.pneu,0,0,0,true);add(p,GEO.aro,matAro(enfeite.aro||m.aro),0,0,0);continue;}
+        add(p,GEO.pneu,MAT.pneu,0,0,0,true);roda.criar({gira:p,esp:p,m,enfeite,add:(q,g,mt)=>add(q,g,mt,0,0,0),anim:rodaAnim});continue;}
       caixa(chassi,sx,sy,sz,mats[mk]||tinta,x,y,z);}}
   // adesivo lateral (entre as rodas)
   let xNum=0;const ad=enfeite.adesivo;
@@ -103,15 +105,19 @@ export function criarCarro(id,cor,numero,enfeite={}){
   // olhos e boca (personagem)
   const rosto=enfeite.rosto?criarRosto(id,chassi,cor,proprios):null;
   const so=add(raiz,GEO.sombra,MAT.sombra,0,0.02,0);so.renderOrder=-1;
-  raiz.userData={tinta,rodas,dianteiras,chassi,fogo,fogoLateral,proprios,rosto,sirenes};
+  raiz.userData={tinta,rodas,dianteiras,chassi,fogo,fogoLateral,proprios,rosto,sirenes,rodaAnim};
   return raiz;
 }
 export function descartarCarro(c){const u=c&&c.userData;if(!u)return;u.tinta.dispose();for(const o of u.proprios||[])o.dispose();
   c.traverse(o=>{if(o.geometry&&!geosFixas.has(o.geometry)&&!Object.values(geoCache).some(g=>g.corpo===o.geometry||g.cab===o.geometry||(g.parabrisa&&g.parabrisa.geo===o.geometry)||(g.boca&&g.boca.geo===o.geometry)))o.geometry.dispose();});}
-export const enfeiteJogador=()=>({adesivo:save.adesivo,aro:save.aro,nome:nomeJogador().toUpperCase(),rosto:save.rosto});
+export const enfeiteJogador=()=>({adesivo:save.adesivo,roda:save.roda,nome:nomeJogador().toUpperCase(),rosto:save.rosto});
 // fogo das laterais: chamas tremendo; forca 0 apaga, 1 normal, maior no turbo
 export function animarFogoLateral(carro,forca){const g=carro.userData.fogoLateral;if(!g)return;g.visible=forca>0;if(!forca)return;
   for(const f of g.children){const e=f.userData.esc,k=forca*(0.6+Math.random()*0.7);f.scale.set(e*(0.8+Math.random()*0.4),e,e*k);f.rotation.y=f.userData.a+(Math.random()-0.5)*0.15;}}
+// rodas especiais: rotor girando sozinho e luz neon trocando de cor
+export function animarRodas(carro,t,dt){const a=carro.userData.rodaAnim;if(!a)return;
+  for(const r of a.rotores)r.rotation.x+=dt*7;
+  for(const l of a.neons)l.color.setHSL((t*0.12)%1,1,0.5);}
 export function piscarSirenes(carro,t){const s=carro.userData.sirenes;if(!s)return;const f=Math.floor(t*5)%2;
   s.a.color.setHex(f?0xff2020:0x3a0808);s.b.color.setHex(f?0x0a1440:0x2060ff);}
 export function pintar(carro,cor){carro.userData.tinta.color.copy(lin(cor));if(carro.userData.rosto)carro.userData.rosto.cor=cor;}

@@ -24,7 +24,7 @@ function loop(t){
   if(modo==='garagem'){atualizarGaragem(dt);renderer.render(garagem.cena,camera);}
   else if(corrida){if(modo!=='pausa')atualizarCorrida(dt);renderer.render(corrida.cena,camera);if(modo==='corrida'&&bruto<0.5)Qualidade.medir(bruto);}
 }
-if(location.hash==="#teste")window.__tk={Som,Musica,TEMAS,corrida:()=>corrida,save:()=>save,P:()=>P,Qualidade,garagem};
+if(location.hash==="#teste")window.__tk={Som,Musica,TEMAS,renderer,camera,corrida:()=>corrida,save:()=>save,P:()=>P,Qualidade,garagem};
 Qualidade.aplicar();
 renderGaragem();
 redimensionar();

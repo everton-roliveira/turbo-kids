@@ -4,7 +4,8 @@ import {BUZINAS,MODELOS,ORDEM_MODELOS,PERSONAGENS,PRECO_CARRO} from '../carros/i
 import {PADRAO,carroLiberado,salvar,save,trocarSave} from '../nucleo/salvo.js';
 import {Som} from '../audio/som.js';
 import {Voz,comNome} from '../audio/voz.js';
-import {ADESIVOS,AROS,CORES} from './opcoes.js';
+import {CORES} from './opcoes.js';
+import {comprarItem,itemComprado,itemLiberado,itensDo,precoItem} from './loja.js';
 import {MAX_UP,MELHORIAS,PRECOS} from './oficina.js';
 import {pintar} from '../carros/criar.js';
 import {carroNaGaragem,garagem,trocarCarroGaragem} from './cena.js';
@@ -42,13 +43,19 @@ export function renderGaragem(){
   const cores=$('#gCores');
   if(!cores.children.length)for(const [hex,nome] of CORES){const b=document.createElement('button');b.className='cor';b.style.background=hex;b.dataset.cor=hex;b.setAttribute('aria-label',nome);cores.appendChild(b);}
   for(const b of cores.children)b.setAttribute('aria-pressed',String(b.dataset.cor===save.cor));
-  const ads=$('#gAdesivos');
-  if(!ads.children.length)for(const [id,nome] of ADESIVOS){const b=document.createElement('button');b.className='chip';b.dataset.id=id;b.textContent=nome;ads.appendChild(b);}
-  for(const b of ads.children)b.setAttribute('aria-pressed',String(b.dataset.id===save.adesivo));
-  const aros=$('#gAros');
-  if(!aros.children.length){const o=document.createElement('button');o.className='aro orig';o.dataset.aro='';o.textContent='Original';aros.appendChild(o);
-    for(const [hex,nome] of AROS){const b=document.createElement('button');b.className='aro';b.style.backgroundColor=hex;b.dataset.aro=hex;b.setAttribute('aria-label','Rodas '+nome);aros.appendChild(b);}}
-  for(const b of aros.children)b.setAttribute('aria-pressed',String((b.dataset.aro||null)===save.aro));
+  // adesivos e rodas: cartões com preço (amarelo = dá para comprar, cinza = faltam moedas)
+  for(const [tipo,lista,caixa] of [['adesivo',$('#gAdesivos'),$('#gCompraAdesivo')],['roda',$('#gRodas'),$('#gCompraRoda')]]){
+    if(!lista.children.length)for(const it of itensDo(tipo)){const b=document.createElement('button');b.className='item';b.dataset.tipo=tipo;b.dataset.id=it.id;
+      const n=document.createElement('b');n.textContent=it.nome;const pr=document.createElement('span');pr.className='preco';b.append(n,pr);lista.appendChild(b);}
+    const prev=garagem.previaItem&&garagem.previaItem.tipo===tipo?garagem.previaItem.id:null,atual=prev||save[tipo];
+    for(const b of lista.children){const id=b.dataset.id,preco=precoItem(tipo,id),livre=itemLiberado(tipo,id),pr=b.querySelector('.preco');
+      b.setAttribute('aria-pressed',String(id===atual));b.classList.toggle('travado',!livre);
+      pr.classList.toggle('caro',!livre&&save.moedas<preco);pr.classList.toggle('livre',livre);
+      pr.textContent=!preco?'Grátis':itemComprado(tipo,id)?'✓ Seu':livre?'⭐ Liberado':'🔒 💰 '+preco.toLocaleString('pt-BR');}
+    caixa.hidden=!prev;
+    if(prev){const preco=precoItem(tipo,prev),falta=preco-save.moedas,nome=itensDo(tipo).find(x=>x.id===prev).nome,o=tipo==='roda'?'A roda':'O adesivo';
+      caixa.querySelector('p').textContent=falta>0?`${o} ${nome} custa 💰 ${preco.toLocaleString('pt-BR')}. Faltam ${falta.toLocaleString('pt-BR')} moedas.`:`${o} ${nome} custa 💰 ${preco.toLocaleString('pt-BR')}.`;
+      const bt=caixa.querySelector('button');bt.disabled=falta>0;bt.textContent='Comprar por 💰 '+preco.toLocaleString('pt-BR');}}
   const ni=$('#gNome');if(document.activeElement!==ni)ni.value=save.nome||'';
   $('#gMelhorias').innerHTML=MELHORIAS.map(m=>{const n=save.up[m.id],max=n>=MAX_UP,preco=PRECOS[n];
     return `<div class="melhoria"><div class="m-ico">${m.ico}</div><div class="m-info"><b>${m.nome}</b><small>${m.txt}</small></div>
@@ -67,7 +74,7 @@ export function renderGaragem(){
   $('#gTurboAnuncio').hidden=!pode;$('#gTurboAnuncio').textContent=`${tv} Correr com ${CONFIG_ANUNCIOS.turbosExtras} turbos extras`;
   $('#gMoedasAnuncio').hidden=!pode;$('#gMoedasAnuncio').textContent=`${tv} Ganhar 💰 ${CONFIG_ANUNCIOS.moedasPorAnuncio}`+(adm?'':` (hoje ainda ${Anuncios.restantes()})`);
   $('#gAnuncios').hidden=!Anuncios.provedor||adm;chip('📺 Prêmios com anúncio: '+(save.premiosAnuncio!==false?'sim':'não'),save.premiosAnuncio!==false)($('#gAnuncios'));
-  $('#gVersao').textContent='Turbo Kids · versão 23'+(adm?' · ADM (sem anúncios)':'');
+  $('#gVersao').textContent='Turbo Kids · versão 24'+(adm?' · ADM (sem anúncios)':'');
 }
 export let tNome=0;
 $('#gNome').addEventListener('input',e=>{const v=e.target.value.replace(/[^\p{L}\p{N} ]/gu,'').slice(0,10);if(v!==e.target.value)e.target.value=v;
@@ -85,11 +92,18 @@ $('#gComprarCarro').addEventListener('click',()=>{const id=garagem.previa,preco=
   Voz.falar('Oba! Agora o '+PERSONAGENS[id].nome+' é seu!',{urgente:true});});
 $('#gCores').addEventListener('click',e=>{const b=e.target.closest('.cor');if(!b)return;save.cor=b.dataset.cor;salvar();
   if(save.adesivo==='listras')trocarCarroGaragem();else pintar(garagem.carro,save.cor);renderGaragem();});
-$('#gAdesivos').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;save.adesivo=b.dataset.id;salvar();trocarCarroGaragem();renderGaragem();});
-$('#gAros').addEventListener('click',e=>{const b=e.target.closest('.aro');if(!b)return;save.aro=b.dataset.aro||null;salvar();trocarCarroGaragem();renderGaragem();});
+// tocar num adesivo ou roda: se já é seu, usa; se não, mostra no carro e oferece para comprar
+function escolherItem(e){const b=e.target.closest('.item');if(!b)return;const {tipo,id}=b.dataset;Som.iniciar();
+  if(itemLiberado(tipo,id)){save[tipo]=id;garagem.previaItem=null;salvar();}else garagem.previaItem={tipo,id};
+  trocarCarroGaragem();renderGaragem();}
+$('#gAdesivos').addEventListener('click',escolherItem);
+$('#gRodas').addEventListener('click',escolherItem);
+for(const caixa of [$('#gCompraAdesivo'),$('#gCompraRoda')])caixa.querySelector('button').addEventListener('click',()=>{const p=garagem.previaItem;if(!p)return;
+  if(comprarItem(p.tipo,p.id)){garagem.previaItem=null;trocarCarroGaragem();renderGaragem();Som.moedas();
+    const r=garagem.carro.userData.rosto;if(r)r.reagir('feliz',2);Voz.falar(p.tipo==='roda'?'Oba! Rodas novas!':'Oba! Adesivo novo!',{urgente:true});}});
 $('#gMelhorias').addEventListener('click',e=>{const b=e.target.closest('.m-comprar');if(!b||b.disabled)return;const id=b.dataset.id,n=save.up[id];
   if(n>=MAX_UP||save.moedas<PRECOS[n])return;Som.iniciar();save.moedas-=PRECOS[n];save.up[id]++;salvar();Som.moedas();renderGaragem();});
-function correr(turbos){if(garagem.previa){garagem.previa=null;trocarCarroGaragem();renderGaragem();}Voz.falar(comNome('Vamos correr{n}!'),{urgente:true});
+function correr(turbos){if(garagem.previa||garagem.previaItem){garagem.previa=null;garagem.previaItem=null;trocarCarroGaragem();renderGaragem();}Voz.falar(comNome('Vamos correr{n}!'),{urgente:true});
   iniciarCorrida();if(turbos)corrida.turbosExtra=turbos;}
 $('#gCorrer').addEventListener('click',async()=>{Som.iniciar();await Anuncios.antesDaCorrida();correr(0);});
 $('#gTurboAnuncio').addEventListener('click',async e=>{const b=e.currentTarget;b.disabled=true;Som.iniciar();
