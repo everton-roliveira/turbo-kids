@@ -37,7 +37,7 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 - Álbum de troféus com a melhor posição em cada pista.
 
 ## Cenários
-20 pistas, cada uma com o seu cenário:
+25 pistas, cada uma com o seu cenário:
 
 1. Campo Verde
 2. Praia
@@ -59,13 +59,18 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 18. Safári: girafas, elefantes, acácias e capim
 19. Cidade do Futuro: torres com anéis de neon, discos voadores, robozinhos e céu estrelado
 20. Jardim das Cerejeiras: cerejeiras floridas, pagodes, portais vermelhos e lanternas de pedra
+21. Quarto de Brinquedos: blocos de montar, bolas, ursinhos de pelúcia e lápis gigantes
+22. Céu das Nuvens: chão de nuvem e balões de ar quente
+23. Jardim das Joaninhas: flores gigantes, joaninhas e abelhas voando
+24. Vila do Natal: árvores de Natal com bolinhas, presentes e casinhas com neve
+25. Estação de Trem: trens coloridos nos trilhos, estações e caixas d'água
 
-A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois da pista 20 os cenários se repetem com traçados novos.
+A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois da pista 25 os cenários se repetem com traçados novos.
 
 ## Para crianças pequenas
 - Uma voz fala em português: contagem, "turbo pronto", posição e resultado (dá para desligar).
 - A primeira corrida mostra uma mãozinha apontando cada botão.
-- Dificuldade pensada para crianças: sobe um pouco a cada pista, desde a primeira, e tem um limite.
+- Dificuldade pensada para crianças: sobe um pouco a cada pista, distribuída da pista 1 até a 25 (adversários mais rápidos, mais buracos e placas, curvas mais fechadas). Depois da 25 fica igual à última.
 - Desvio no turbo (liga e desliga na garagem, começa desligado): durante o turbo, do botão ou da faixa azul, se a criança não estiver virando, o carro desvia sozinho das placas. Fora do turbo, quem vira é a criança.
 - Os adversários não tentam bater nos primeiros 8 segundos, e até a pista 4 a batida deles só empurra.
 - Quem está muito na frente diminui um pouco a velocidade.

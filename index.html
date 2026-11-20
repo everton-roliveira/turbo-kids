@@ -219,7 +219,7 @@ body.inclinar #bEsq,body.inclinar #bDir{display:none}
     <p class="como">🛟 Desvio no turbo: quando ligado, o carro desvia sozinho das placas só enquanto estiver no turbo (do botão ou da faixa azul). Fora do turbo, quem vira é você.</p>
     <p class="como" id="gDicaInstalar" hidden></p>
     <button id="gZerar" class="link">Recomeçar do zero</button>
-    <small class="versao">Turbo Kids · versão 13</small>
+    <small class="versao">Turbo Kids · versão 14</small>
   </div>
 </div>
 
@@ -376,20 +376,28 @@ const TEMAS=[
   {nome:'Safári',ico:'🦒',ceu:0xffe0a0,ceuTopo:0x5aa0e8,nevoa:0xffe9c0,chao:0xd8b060,arvore:0x5f8a2a,tronco:0x6b4a2b,luz:1.05,veg:'safari'},
   {nome:'Cidade do Futuro',ico:'🛸',ceu:0x2a1a5e,ceuTopo:0x0a0620,nevoa:0x3a2a70,chao:0x2a2c44,arvore:0x19e0d0,tronco:0x555560,luz:0.75,veg:'futuro'},
   {nome:'Jardim das Cerejeiras',ico:'🌸',ceu:0xcfe8ff,ceuTopo:0x6aa6e8,nevoa:0xf5e6ef,chao:0x8cc46a,arvore:0xffb7d5,tronco:0x6b4a3b,luz:1.0,veg:'cerejeira'},
+  {nome:'Quarto de Brinquedos',ico:'🧸',ceu:0xfff2d6,ceuTopo:0xffd9a0,nevoa:0xfff0dc,chao:0xc9a27a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'brinquedo'},
+  {nome:'Céu das Nuvens',ico:'🎈',ceu:0x9fd4ff,ceuTopo:0x3a8ae0,nevoa:0xe6f4ff,chao:0xf2f8ff,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'nuvem'},
+  {nome:'Jardim das Joaninhas',ico:'🐞',ceu:0xbfe8ff,ceuTopo:0x5aa8e8,nevoa:0xe4f6e0,chao:0x6fbf4a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'joaninha'},
+  {nome:'Vila do Natal',ico:'🎄',ceu:0xc8dcf0,ceuTopo:0x6f8fc0,nevoa:0xeef4fa,chao:0xf4f8fc,arvore:0x1f6e35,tronco:0x6b4a2b,luz:0.92,veg:'natal'},
+  {nome:'Estação de Trem',ico:'🚂',ceu:0xa9d8ff,ceuTopo:0x4a8fe0,nevoa:0xdcefff,chao:0x7cbf4a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'trem'},
 ];
 const temaDoNivel=n=>TEMAS[(n-1)%TEMAS.length];
 const ADESIVOS=[['nenhum','Nenhum'],['raio','⚡ Raio'],['chamas','🔥 Chamas'],['estrelas','⭐ Estrelas'],['listras','🏁 Listras']];
 const AROS=[['#d6d9de','Prata'],['#2a2c31','Preto'],['#d4a017','Dourado'],['#f2f2f2','Branco'],['#d40000','Vermelho'],['#1e5bd8','Azul']];
 /* cada carro tem sua buzina (duas notas) */
 const BUZINAS={rosso:[440,554],touro:[330,415],flecha:[523,659],gt:[392,494],v8:[220,277],proto:[587,740]};
-function paramsNivel(n){return{
-  // dificuldade para criança: sobe devagar desde a pista 1 e tem teto
-  aiVmax:Math.min(45+n*2,66),
-  buracos:Math.min(3+n,13),
-  bloqueios:Math.min(2+Math.floor(n/2),8),
-  drift:Math.min(0.06+n*0.02,0.27),
-  agressao:Math.min(0.08+n*0.03,0.34),
-  desvio:Math.min(0.5+n*0.06,0.95),
+// 0 na pista 1 e 1 na última: a dificuldade sobe aos poucos por todas as pistas
+const progresso=n=>clamp((n-1)/(TEMAS.length-1),0,1);
+function paramsNivel(n){const t=progresso(n);return{
+  aiVmax:47+21*t,
+  iaAcel:13.8+8.2*t,
+  buracos:Math.round(4+10*t),
+  bloqueios:Math.round(2+7*t),
+  drift:0.08+0.2*t,
+  agressao:0.11+0.25*t,
+  desvio:0.56+0.39*t,
+  folga:1-0.3*t,
   voltas:2};}
 function statsJogador(){const u=save.up;return{
   vmax:52+u.motor*6, acel:19+u.acel*4, lat:13+u.pneu*1.6, rateLat:8+u.pneu,
@@ -896,7 +904,7 @@ let P=null;
 const A={x:0,z:0,tx:0,tz:1,rx:-1,rz:0,k:0};
 function construirPista(nivel){
   const rnd=mulberry32(nivel*7919+13);
-  const cur=Math.min(0.18+nivel*0.06,0.55), n=9+Math.min(nivel,7), pts=[];
+  const cur=0.24+0.31*progresso(nivel), n=9+Math.min(nivel,7), pts=[];
   for(let i=0;i<n;i++){const a=i/n*Math.PI*2+(rnd()-0.5)*0.25;const r=230*(1-cur*0.5+rnd()*cur);pts.push(new THREE.Vector3(Math.cos(a)*r*1.25,0,Math.sin(a)*r));}
   const curva=new THREE.CatmullRomCurve3(pts,true,'centripetal');
   const L=curva.getLength(),N=Math.ceil(L/1.5),ds=L/N;
@@ -1000,7 +1008,7 @@ function montarCenario(cena,tema,extras){
       im.setColorAt(n,cor.copy(cores[n%cores.length]));});
     if(im.instanceColor)im.instanceColor.needsUpdate=true;
   }else if(tema.veg==='palmeira'){palmeiras(160);
-  }else if(['doce','dino','lua','fazenda','castelo','pirata','cogumelo','polo','obra','parque','fundo','safari','futuro','cerejeira'].includes(tema.veg)){
+  }else if(['doce','dino','lua','fazenda','castelo','pirata','cogumelo','polo','obra','parque','fundo','safari','futuro','cerejeira','brinquedo','nuvem','joaninha','natal','trem'].includes(tema.veg)){
     decorarTema(cena,tema,{plantar,instancia,dm,rnd,palmeiras,centro:[(minX+maxX)/2,(minZ+maxZ)/2]});
   }else if(tema.veg==='cacto'){
     const g=mesclar([new THREE.CylinderGeometry(0.5,0.55,5,8).translate(0,2.5,0),new THREE.SphereGeometry(0.5,8,6).translate(0,5,0),
@@ -1255,6 +1263,80 @@ function decorarTema(cena,tema,o){
     // lanternas de pedra
     grupo([[mesclar([B(0.6,1,0.6,0,0.5,0),B(1,0.7,1,0,1.35,0),new THREE.ConeGeometry(0.9,0.6,4).rotateY(Math.PI/4).translate(0,2,0)]),mat(0x9a9a92)],
       [B(0.6,0.4,1.02,0,1.35,0),brilho(0xffe08a)]],40,1.2,[0.9,1.3]);
+  }else if(tema.veg==='brinquedo'){
+    // blocos de montar
+    const pinos=[];for(const x of [-0.5,0.5])for(const z of [-1.5,-0.5,0.5,1.5])pinos.push(new THREE.CylinderGeometry(0.3,0.3,0.3,10).translate(x,1.35,z));
+    grupo([[mesclar([B(2,1.2,4,0,0.6,0),...pinos]),new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.35})]],80,4,[1,2.6],[[0xe8202a,0x2f8fff,0xffc21f,0x3fbf3f,0xff8a1f]]);
+    // bolas
+    grupo([[new THREE.SphereGeometry(1.5,18,12).translate(0,1.5,0),new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.3})]],40,4,[1,2.6],[[0xff3b6b,0x3bc4ff,0xffd23f,0x7bd85a,0xb36bff]]);
+    // ursinhos de pelúcia
+    grupo([[mesclar([new THREE.SphereGeometry(1.2,14,10).scale(1,1.15,0.9).translate(0,1.6,0),new THREE.SphereGeometry(0.9,14,10).translate(0,3.3,0),
+        new THREE.SphereGeometry(0.32,8,6).translate(-0.7,4.0,0),new THREE.SphereGeometry(0.32,8,6).translate(0.7,4.0,0),
+        new THREE.SphereGeometry(0.45,8,6).translate(-1.1,1.9,0.3),new THREE.SphereGeometry(0.45,8,6).translate(1.1,1.9,0.3),
+        new THREE.SphereGeometry(0.5,8,6).translate(-0.6,0.45,0.6),new THREE.SphereGeometry(0.5,8,6).translate(0.6,0.45,0.6)]),mat(0xa86b3c)],
+      [mesclar([new THREE.SphereGeometry(0.38,8,6).scale(1,0.8,0.7).translate(0,3.1,0.8),new THREE.SphereGeometry(0.7,10,8).scale(1,1.1,0.5).translate(0,1.7,0.8)]),mat(0xf1d6b0)],
+      [mesclar([new THREE.SphereGeometry(0.1,6,5).translate(-0.32,3.5,0.8),new THREE.SphereGeometry(0.1,6,5).translate(0.32,3.5,0.8),new THREE.SphereGeometry(0.12,6,5).translate(0,3.2,1.08)]),mat(0x111111)]],
+      14,5,[1.6,2.6]);
+    // lápis gigantes deitados
+    grupo([[new THREE.CylinderGeometry(0.5,0.5,7,6).rotateZ(Math.PI/2).translate(0,0.5,0),mat(0xffffff)],
+      [new THREE.ConeGeometry(0.5,1.4,6).rotateZ(-Math.PI/2).translate(4.2,0.5,0),mat(0xf1d6b0)],
+      [new THREE.ConeGeometry(0.17,0.45,6).rotateZ(-Math.PI/2).translate(4.7,0.5,0),mat(0x333333)]],24,5,[1.4,2.4],[[0xe8202a,0x2f8fff,0x3fbf3f,0xffc21f,0xb36bff]]);
+  }else if(tema.veg==='nuvem'){
+    // nuvens fofas no chão
+    grupo([[mesclar([new THREE.SphereGeometry(2,12,10).translate(0,1,0),new THREE.SphereGeometry(1.6,12,10).translate(1.9,0.8,0.4),new THREE.SphereGeometry(1.5,12,10).translate(-1.8,0.7,-0.3),
+      new THREE.SphereGeometry(1.3,12,10).translate(0.4,2.2,0.2)]),mat(0xffffff)]],110,5,[0.8,2.5]);
+    // balões de ar quente
+    grupo([[new THREE.SphereGeometry(3,18,14).scale(1,1.2,1).translate(0,15,0),mat(0xffffff)],
+      [mesclar([new THREE.TorusGeometry(3.02,0.25,6,28).rotateX(Math.PI/2).translate(0,15,0),new THREE.TorusGeometry(2.6,0.25,6,28).rotateX(Math.PI/2).translate(0,13.2,0)]),mat(0xffffff)],
+      [mesclar([B(1.6,1.2,1.6,0,9.2,0),...[[-0.7,-0.7],[0.7,-0.7],[-0.7,0.7],[0.7,0.7]].map(([x,z])=>B(0.06,2.6,0.06,x,11,z))]),mat(0x8a5a2b)]],
+      22,5,[1,1.5],[[0xe8202a,0x2f8fff,0xffc21f,0xff6fb5,0x3fbf3f,0xff8a1f],[0xffd21f,0xffffff]]);
+  }else if(tema.veg==='joaninha'){
+    // flores gigantes
+    grupo([[new THREE.CylinderGeometry(0.25,0.3,8,8).translate(0,4,0),mat(0x3e8f2f)],
+      [mesclar([0,1,2,3,4,5].map(k=>new THREE.SphereGeometry(1.2,10,8).scale(1,0.55,0.25).translate(1.3,0,0).rotateZ(k*Math.PI/3).translate(0,8.2,0.2))),mat(0xffffff)],
+      [new THREE.SphereGeometry(0.8,12,10).scale(1,1,0.6).translate(0,8.2,0.5),mat(0xffd21f)]],
+      55,7,[1.2,2],[null,[0xff6fb5,0xb36bff,0xffffff,0xff5e3a,0x3bc4ff]]);
+    // joaninhas
+    const pontos=[[0.5,0.55,0.2],[-0.5,0.55,0.2],[0.55,0.45,-0.5],[-0.55,0.45,-0.5],[0.3,0.75,-0.15],[-0.3,0.75,-0.15]].map(([x,y,z])=>new THREE.SphereGeometry(0.17,6,5).translate(x,y,z));
+    grupo([[new THREE.SphereGeometry(1,16,10,0,Math.PI*2,0,Math.PI/2).scale(0.9,0.85,1.1).translate(0,0.1,0),mat(0xe8202a)],
+      [mesclar([new THREE.SphereGeometry(0.42,10,8).translate(0,0.3,1.05),B(0.05,0.02,2.1,0,0.95,-0.05),...pontos]),mat(0x151515)],
+      [mesclar([new THREE.SphereGeometry(0.11,6,5).translate(-0.18,0.45,1.38),new THREE.SphereGeometry(0.11,6,5).translate(0.18,0.45,1.38)]),mat(0xffffff)]],45,3,[1.4,2.6]);
+    // abelhas voando
+    grupo([[new THREE.SphereGeometry(1,12,10).scale(0.55,0.55,0.85).translate(0,5,0),mat(0xffc21f)],
+      [mesclar([new THREE.TorusGeometry(0.55,0.08,6,16).scale(1,1,1).translate(0,5,0.15),new THREE.TorusGeometry(0.5,0.08,6,16).translate(0,5,-0.3),new THREE.SphereGeometry(0.1,6,5).translate(-0.2,5.15,0.78),new THREE.SphereGeometry(0.1,6,5).translate(0.2,5.15,0.78)]),mat(0x151515)],
+      [mesclar([new THREE.SphereGeometry(0.5,8,6).scale(0.9,0.12,0.5).rotateZ(0.5).translate(-0.6,5.6,0),new THREE.SphereGeometry(0.5,8,6).scale(0.9,0.12,0.5).rotateZ(-0.5).translate(0.6,5.6,0)]),
+        mat(0xffffff,{transparent:true,opacity:0.75})]],40,2,[1,1.6]);
+    grupo([[new THREE.ConeGeometry(0.35,1.4,4).translate(0,0.7,0),mat(0x4fa63f)]],220,0.8,[0.8,1.6]);
+  }else if(tema.veg==='natal'){
+    // árvores de Natal com bolinhas e estrela
+    const bolas=[];for(let i=0;i<10;i++){const a=i*2.1,y=1.6+(i%5)*0.95,r=2.3-(y-1.2)*0.38;bolas.push(new THREE.SphereGeometry(0.22,6,5).translate(r*Math.cos(a),y,r*Math.sin(a)));}
+    grupo([[mesclar([new THREE.ConeGeometry(2.6,3,10).translate(0,2.4,0),new THREE.ConeGeometry(2.0,2.6,10).translate(0,4,0),new THREE.ConeGeometry(1.4,2.2,10).translate(0,5.4,0)]),mat(0x1f6e35)],
+      [new THREE.CylinderGeometry(0.35,0.4,1,8).translate(0,0.5,0),mat(0x6b4a2b)],
+      [mesclar(bolas),mat(0xffffff)],[new THREE.OctahedronGeometry(0.5,0).translate(0,6.8,0),brilho(0xffd21f)]],
+      90,3.5,[0.8,1.6],[null,null,[0xe8202a,0xffc21f,0x2f8fff]]);
+    // presentes
+    grupo([[B(1.6,1.4,1.6,0,0.7,0),mat(0xffffff)],[mesclar([B(1.64,1.44,0.3,0,0.7,0),B(0.3,1.44,1.64,0,0.7,0),new THREE.TorusGeometry(0.3,0.08,6,12).translate(0,1.55,0)]),mat(0xffffff)]],
+      80,1.5,[0.8,1.8],[[0xe8202a,0x2f8fff,0x3fbf3f,0xb36bff],[0xffd21f,0xffffff]]);
+    // casinhas com neve no telhado
+    const casa=new THREE.Shape([new THREE.Vector2(-3,0),new THREE.Vector2(3,0),new THREE.Vector2(3,4),new THREE.Vector2(0,6.5),new THREE.Vector2(-3,4)]);
+    grupo([[new THREE.ExtrudeGeometry(casa,{depth:6,bevelEnabled:false}).translate(0,0,-3),mat(0xffffff)],
+      [mesclar([new THREE.BoxGeometry(4.6,0.5,6.8).rotateZ(0.7).translate(-1.55,5.4,0),new THREE.BoxGeometry(4.6,0.5,6.8).rotateZ(-0.7).translate(1.55,5.4,0),B(0.9,2.4,0.9,1.6,6.6,-1.2)]),mat(0xf8fbff)],
+      [mesclar([B(1.4,2.4,0.1,0,1.2,3.05),B(1.1,1.1,0.1,-1.8,2.4,3.05),B(1.1,1.1,0.1,1.8,2.4,3.05)]),brilho(0xffd98a)]],
+      10,6,[1,1.3],[[0xc8322b,0x8a5a2b,0x2f6e9a,0x3f8a4a]]);
+  }else if(tema.veg==='trem'){
+    // trens coloridos parados nos trilhos
+    const rodas=[];for(const z of [4.6,3.2,1.8,-1.6,-3.4,-6.8,-8.6])for(const x of [-1.05,1.05])rodas.push(new THREE.CylinderGeometry(0.55,0.55,0.3,12).rotateZ(Math.PI/2).translate(x,0.75,z));
+    const dormentes=[];for(let z=-11;z<=7;z+=1.4)dormentes.push(B(3.2,0.15,0.5,0,0.08,z));
+    grupo([[mesclar([new THREE.CylinderGeometry(1.1,1.1,4,14).rotateX(Math.PI/2).translate(0,2,3.2),B(2.4,3.2,2.2,0,2.4,0.4)]),mat(0xffffff)],
+      [mesclar([B(2.2,2,4.2,0,2.1,-2.6),B(2.2,2,4.2,0,2.1,-7.7)]),mat(0xffffff)],
+      [mesclar([...rodas,new THREE.CylinderGeometry(0.35,0.45,1.4,10).translate(0,3.6,4.2),B(2.7,0.3,2.6,0,4.1,0.4),B(0.12,0.12,19,-0.8,0.2,-2),B(0.12,0.12,19,0.8,0.2,-2)]),mat(0x26272b)],
+      [mesclar(dormentes),mat(0x6b4a2b)]],
+      15,12,[1,1.2],[[0xe8202a,0x2f8fff,0x3fbf3f],[0xffc21f,0xff8a1f,0x3bc4ff,0xb36bff]]);
+    // caixas d'água e estações
+    grupo([[mesclar([new THREE.CylinderGeometry(2,2,3,14).translate(0,8,0),new THREE.ConeGeometry(2.3,1.4,14).translate(0,10.2,0)]),mat(0x8a5a3a)],
+      [mesclar([[-1.3,-1.3],[1.3,-1.3],[-1.3,1.3],[1.3,1.3]].map(([x,z])=>B(0.3,6.5,0.3,x,3.25,z))),mat(0x4a3018)]],6,4,[1,1.2]);
+    grupo([[B(12,4,5,0,2,0),mat(0xf0e2c4)],[mesclar([B(13.4,0.5,6.8,0,4.3,0),B(1.4,1.4,0.2,0,3.2,2.55)]),mat(0x8a2f24)],[new THREE.CylinderGeometry(0.55,0.55,0.1,16).rotateX(Math.PI/2).translate(0,3.2,2.7),mat(0xffffff)]],4,9,[1,1.2]);
+    arvoresRedondas(80,[0x3a8a34,0x4fa63f]);
   }
 }
 
@@ -1382,7 +1464,7 @@ function iniciarCorrida(){
       alt:0,valt:0,tRampa:0,tPad:0,
       decisao:{},faixaAlvo:i%2?6:-6,tDecide:0,ramT:0,afastaT:0};
     if(eh){Object.assign(c,statsJogador());jogador=c;}
-    else Object.assign(c,{vmax:p.aiVmax+(P.rnd()*2-1)*4,acel:Math.min(13+nivel*0.8,22),lat:7,latRam:nivel<=4?9:13,rateLat:5,fatorLento:0.5,lentoDur:1.5,perdaBuraco:0.45});
+    else Object.assign(c,{vmax:p.aiVmax+(P.rnd()*2-1)*4,acel:p.iaAcel,lat:7,latRam:nivel<=4?9:13,rateLat:5,fatorLento:0.5,lentoDur:1.5,perdaBuraco:0.45});
     carros.push(c);
   }
   corrida={cena,sol,p,obs,carros,jogador,tema,nivel,moedasMesh,ordem:[],contagem:3.6,ultimoNum:4,fimT:0,mostrou:false,
@@ -1449,7 +1531,7 @@ function controlarIA(c,dt){
   else{c.ramT=0;c.alvoVd=clamp((c.faixaAlvo-c.d)*2.6,-c.lat,c.lat);}
   c.acelerando=true;
   // quem está muito na frente do jogador alivia um pouco, quem ficou para trás acelera um pouco
-  c.multV=1;if(!c.ehJogador){const diff=c.prog-j.prog,forca=corrida.nivel<=5?1:0.8;
+  c.multV=1;if(!c.ehJogador){const diff=c.prog-j.prog,forca=corrida.p.folga;
     if(diff>20)c.multV=1-Math.min(0.15,(diff-20)/200)*forca;else if(diff<-30)c.multV=1+Math.min(0.1,(-diff-30)/250);}
 }
 function fisica(c,dt){

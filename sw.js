@@ -1,6 +1,6 @@
 // Guarda o jogo no celular para abrir sem internet.
 // A página sempre busca a versão nova (sem o cache de 10 min do GitHub Pages); o resto (Three.js, fontes, ícones) vem do cache.
-const CACHE = 'turbo-kids-v7';
+const CACHE = 'turbo-kids-v8';
 const ARQUIVOS = [
   './', './index.html', './manifest.webmanifest', './icone.svg', './icone-180.png', './icone-192.png', './icone-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
