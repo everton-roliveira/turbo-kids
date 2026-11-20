@@ -77,7 +77,21 @@ A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois d
 - Música e comemoração com confete e fogos no pódio.
 
 ## Técnico
-- Um único `index.html` com [Three.js](https://threejs.org/) r128. Não precisa de build.
+- [Three.js](https://threejs.org/) r128, sem build: `index.html` (telas), `css/jogo.css` e os scripts em `js/`, carregados em ordem e dividindo o mesmo escopo:
+
+  | Arquivo | O que tem |
+  |---|---|
+  | `dados.js` | Funções básicas, carros, personagens, progresso salvo, cenários (`TEMAS`), dificuldade e oficina |
+  | `audio.js` | Som, música e voz |
+  | `render.js` | Renderização, qualidade gráfica e texturas |
+  | `carros.js` | Rosto dos carros e carroceria |
+  | `garagem.js` | Garagem 3D de cada personagem |
+  | `pista.js` | Traçado, túnel, ponte e cenário em volta da pista |
+  | `cenarios.js` | Objetos dos cenários das pistas 7 em diante |
+  | `corrida.js` | Obstáculos, corrida, física, adversários e câmera |
+  | `interface.js` | Tutorial, comemoração, telas, garagem, controles e instalação |
+  | `principal.js` | Tamanho da tela e loop principal |
+- Ao mudar arquivos, aumente `CACHE` em `sw.js` (e inclua arquivos novos na lista).
 - `manifest.webmanifest` + `sw.js`: dá para instalar como app e jogar sem internet.
 - A qualidade gráfica baixa sozinha se o celular não aguentar (tira as sombras e depois reduz a resolução).
 - O progresso fica salvo no próprio aparelho (`localStorage`).

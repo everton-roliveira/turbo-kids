@@ -1,8 +1,10 @@
 // Guarda o jogo no celular para abrir sem internet.
-// A página sempre busca a versão nova (sem o cache de 10 min do GitHub Pages); o resto (Three.js, fontes, ícones) vem do cache.
-const CACHE = 'turbo-kids-v8';
+// Arquivos do próprio jogo: busca sempre a versão nova (sem o cache de 10 min do GitHub Pages) e usa o cache só sem internet.
+// Three.js, fontes e ícones de fora: vêm do cache.
+const CACHE = 'turbo-kids-v9';
+const JS = ['dados', 'audio', 'render', 'carros', 'garagem', 'pista', 'cenarios', 'corrida', 'interface', 'principal'].map((n) => `./js/${n}.js`);
 const ARQUIVOS = [
-  './', './index.html', './manifest.webmanifest', './icone.svg', './icone-180.png', './icone-192.png', './icone-512.png',
+  './', './index.html', './css/jogo.css', ...JS, './manifest.webmanifest', './icone.svg', './icone-180.png', './icone-192.png', './icone-512.png',
   'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
 ];
 
@@ -18,21 +20,19 @@ self.addEventListener('activate', (e) => {
   );
 });
 
+const guardar = (chave, r) => { if (r.ok || r.type === 'opaque') { const copia = r.clone(); caches.open(CACHE).then((c) => c.put(chave, copia)); } return r; };
+
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
+  const url = new URL(req.url);
   if (req.mode === 'navigate') {
-    e.respondWith(
-      fetch(req.url, { cache: 'no-store' })
-        .then((r) => { const copia = r.clone(); caches.open(CACHE).then((c) => c.put('./index.html', copia)); return r; })
-        .catch(() => caches.match('./index.html')),
-    );
+    e.respondWith(fetch(req.url, { cache: 'no-store' }).then((r) => guardar('./index.html', r)).catch(() => caches.match('./index.html')));
     return;
   }
-  e.respondWith(
-    caches.match(req).then((achou) => achou || fetch(req).then((r) => {
-      if (r.ok || r.type === 'opaque') { const copia = r.clone(); caches.open(CACHE).then((c) => c.put(req, copia)); }
-      return r;
-    })),
-  );
+  if (url.origin === location.origin && /\.(js|css)$/.test(url.pathname)) {
+    e.respondWith(fetch(url.href.split('?')[0], { cache: 'no-store' }).then((r) => guardar(req, r)).catch(() => caches.match(req, { ignoreSearch: true })));
+    return;
+  }
+  e.respondWith(caches.match(req).then((achou) => achou || fetch(req).then((r) => guardar(req, r))));
 });
