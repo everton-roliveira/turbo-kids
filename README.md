@@ -37,7 +37,21 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 - Álbum de troféus com a melhor posição em cada pista.
 
 ## Cenários
-Campo, praia, deserto, cidade, neve e noite. A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte.
+11 pistas, cada uma com o seu cenário:
+
+1. Campo Verde
+2. Praia
+3. Deserto
+4. Cidade
+5. Neve
+6. Noite
+7. Terra dos Doces: pirulitos, bengalas, balinhas e árvores de algodão-doce
+8. Vale dos Dinossauros: dinossauros pescoçudos, palmeiras e vulcões
+9. Lua: céu estrelado, a Terra no céu, crateras e foguetes. O pulo na rampa é mais alto
+10. Fazenda: celeiros, vaquinhas, girassóis e fardos de feno
+11. Reino Encantado: castelos coloridos, arco-íris e árvores cor-de-rosa
+
+A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois da pista 11 os cenários se repetem com traçados novos.
 
 ## Para crianças pequenas
 - Uma voz fala em português: contagem, "turbo pronto", posição e resultado (dá para desligar).
