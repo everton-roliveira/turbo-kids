@@ -105,6 +105,7 @@ A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois d
 - Portal: `plataforma` em `js/anuncios/config.js` (`auto` descobre pelo endereço). Cada portal tem o seu arquivo em `js/anuncios/provedores/`.
 
 ## Técnico
+- Documentação para quem for continuar: [`docs/MAPA.md`](docs/MAPA.md) (o que o jogo faz e cada módulo), [`docs/PROXIMOS-PASSOS.md`](docs/PROXIMOS-PASSOS.md) (próximas features) e [`CLAUDE.md`](CLAUDE.md) (regras). Testes automáticos em [`testes/`](testes/README.md).
 - [Three.js](https://threejs.org/) r128, sem build. O código está em ES modules (`import`/`export`) dentro de `js/`, e o `index.html` carrega só o `js/main.js`:
 
   ```

@@ -1,0 +1,27 @@
+// Simula uma criança: segura o acelerador e nunca vira. Mede posição final, batidas e buracos.
+const puppeteer=require('puppeteer-core');const http=require('http');const fs=require('fs');const path=require('path');
+const RAIZ=process.argv[2],NIVEIS=(process.argv[3]||'1,3,6').split(',').map(Number),AJUDA=process.argv[4]!=='sem';
+const tipos={'.html':'text/html','.js':'text/javascript','.css':'text/css','.json':'application/json'};
+const srv=http.createServer((q,r)=>{let f=path.join(RAIZ,decodeURIComponent(q.url.split('?')[0].split('#')[0]));if(f.endsWith('/'))f+='index.html';
+  fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);r.end();return;}r.writeHead(200,{'content-type':tipos[path.extname(f)]||'application/octet-stream'});r.end(d);});});
+(async()=>{await new Promise(r=>srv.listen(0,r));const url=`http://localhost:${srv.address().port}/index.html#teste`;
+  const nav=await puppeteer.launch({executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:'new',protocolTimeout:600000,args:['--use-angle=metal','--mute-audio','--disable-background-timer-throttling','--disable-renderer-backgrounding','--disable-backgrounding-occluded-windows']});
+  const T=fs.readFileSync(path.join(__dirname,'node_modules/three/build/three.min.js'));
+  const rodar=async(nivel)=>{const pg=await nav.newPage();await pg.setViewport({width:640,height:300});await pg.setRequestInterception(true);
+    pg.on('request',q=>{const u=q.url();if(u.includes('cdnjs'))q.respond({status:200,contentType:'text/javascript',body:T});else if(u.startsWith('http://localhost'))q.continue();else q.abort();});
+    const erros=[];pg.on('pageerror',e=>erros.push(e.message));
+    await pg.goto(url,{waitUntil:'domcontentloaded'});
+    await pg.evaluate((n,a)=>localStorage.setItem('corrida-turbo-v1',JSON.stringify({modelo:'rosso',tutorial:true,qualidade:0,nivel:n,ajuda:a,auto:true,voz:false,som:false,up:(u=>({motor:u,acel:u,amort:u,pneu:u}))(Math.min(5,Math.floor((n-1)/5)))})),nivel,AJUDA);
+    await pg.goto(url.replace('#','?n='+nivel+'#'),{waitUntil:'domcontentloaded'});await new Promise(r=>setTimeout(r,800));
+    await pg.evaluate(()=>document.querySelector('#gCorrer').click());
+    const r=await pg.evaluate(()=>new Promise(fim=>{const st={fora:0,placas:0,buracos:0};let ant={estado:'normal',invul:0,tb:0};
+      const iv=setInterval(()=>{const c=__tk.corrida();if(!c)return;const j=c.jogador;
+        if(j.estado==='fora'&&ant.estado!=='fora')st.fora++;
+        if(j.estado==='normal'&&j.invul>ant.invul+0.5&&ant.estado==='normal')st.placas++;
+        if(j.tBuraco>ant.tb+0.5)st.buracos++;
+        ant={estado:j.estado,invul:j.invul,tb:j.tBuraco};
+        if(c.mostrou||j.terminou){clearInterval(iv);fim(Object.assign(st,{pos:j.posFinal,t:Math.round(c.t)}));}},50);}));
+    await pg.close();return {nivel,...r,erros:erros.length};};
+  const res=[];for(const n of NIVEIS)res.push(await rodar(n));
+  for(const r of res)console.log(JSON.stringify(r));
+  await nav.close();srv.close();})().catch(e=>{console.error('FALHOU',e.message);process.exit(1);});

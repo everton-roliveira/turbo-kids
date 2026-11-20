@@ -1,0 +1,28 @@
+// Mapa de pistas: escolher uma pista já liberada, correr nela e ver o que acontece ao vencer.
+const puppeteer=require('puppeteer-core');const http=require('http');const fs=require('fs');const path=require('path');
+const RAIZ=process.argv[2],SAIDA=process.argv[3];
+const tipos={'.html':'text/html','.js':'text/javascript','.css':'text/css'};
+const srv=http.createServer((q,r)=>{let f=path.join(RAIZ,decodeURIComponent(q.url.split('?')[0].split('#')[0]));fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);r.end();return;}r.writeHead(200,{'content-type':tipos[path.extname(f)]||'application/octet-stream'});r.end(d);});});
+const espera=ms=>new Promise(r=>setTimeout(r,ms));
+(async()=>{await new Promise(r=>srv.listen(0,r));const url=`http://localhost:${srv.address().port}/index.html#teste`;
+  const nav=await puppeteer.launch({executablePath:process.env.CHROME||'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',headless:'new',protocolTimeout:600000,args:['--use-angle=metal','--mute-audio']});
+  const pg=await nav.newPage();await pg.setViewport({width:960,height:440});await pg.setRequestInterception(true);const T=fs.readFileSync(path.join(__dirname,'node_modules/three/build/three.min.js'));
+  pg.on('request',q=>{const u=q.url();if(u.includes('cdnjs'))q.respond({status:200,contentType:'text/javascript',body:T});else if(u.startsWith('http://localhost'))q.continue();else q.abort();});
+  const erros=[];pg.on('pageerror',e=>erros.push(e.message));
+  await pg.goto(url,{waitUntil:'domcontentloaded'});
+  await pg.evaluate(()=>localStorage.setItem('corrida-turbo-v1',JSON.stringify({moedas:100,nivel:8,cor:'#d40000',modelo:'rosso',tutorial:true,trofeus:{1:1,2:2,3:3,4:5}})));
+  await pg.goto(url.replace('#','?a=1#'),{waitUntil:'domcontentloaded'});await espera(1000);
+  console.log('garagem',await pg.$eval('#gPista',e=>e.textContent));
+  await pg.click('#gPista');await espera(400);await pg.screenshot({path:`${SAIDA}/mapa.png`});
+  await pg.setViewport({width:390,height:844});await espera(400);await pg.screenshot({path:`${SAIDA}/mapa-retrato.png`});await pg.setViewport({width:960,height:440});
+  console.log('bloqueadas',await pg.$$eval('#mGrade button:disabled',b=>b.length),'total',await pg.$$eval('#mGrade button',b=>b.length));
+  await pg.click('#mGrade button[data-n="3"]');await espera(400);
+  console.log('escolheu',await pg.$eval('#gPista',e=>e.textContent),'mapa aberto?',!(await pg.$eval('#mapa',e=>e.hidden)));
+  await pg.evaluate(()=>document.querySelector('#gCorrer').click());await espera(4500);
+  console.log('corrida',await pg.evaluate(()=>({nivel:__tk.corrida().nivel,tema:__tk.corrida().tema.nome})));
+  await pg.evaluate(()=>{const c=__tk.corrida(),j=c.jogador;j.prog=c.p.voltas*__tk.P().L-3;j.v=50;for(const o of c.carros)if(o!==j)o.prog=Math.min(o.prog,j.prog-50);});
+  await espera(6500);
+  console.log('resultado',await pg.evaluate(()=>({txt:document.querySelector('#rTexto').textContent,nivel:__tk.save().nivel,pista:__tk.save().pista})));
+  await pg.evaluate(()=>document.querySelector('#rGaragem').click());await espera(400);
+  console.log('garagem depois',await pg.$eval('#gPista',e=>e.textContent));
+  console.log('ERROS',erros.length?erros:'nenhum');await nav.close();srv.close();})().catch(e=>{console.error('FALHOU',e.message);process.exit(1);});

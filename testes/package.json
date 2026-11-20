@@ -1,0 +1,9 @@
+{
+  "name": "turbo-kids-testes",
+  "private": true,
+  "description": "Testes automáticos do Turbo Kids: abrem o jogo no Chrome de verdade (sem tela) e conferem garagem, corridas, loja, anúncios e cenários.",
+  "dependencies": {
+    "puppeteer-core": "23.11.1",
+    "three": "0.128.0"
+  }
+}
