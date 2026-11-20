@@ -8,12 +8,17 @@ function decorarTema(cena,tema,o){
   const brilho=c=>new THREE.MeshBasicMaterial({color:lin(c)});
   const cor=new THREE.Color();
   // peças que dividem a mesma posição; cores[k] = lista de cores da peça k (null = cor do material)
-  const grupo=(pecas,qtd,raio,esc,cores)=>{
-    const ims=pecas.map(([g,m])=>instancia(g,m,qtd));
-    const n=plantar(qtd,()=>({r:raio}),(i,x,z)=>{const sc=esc[0]+rnd()*(esc[1]-esc[0]);
-      dm.position.set(x,0,z);dm.rotation.set(0,rnd()*Math.PI*2,0);dm.scale.set(sc,sc,sc);dm.updateMatrix();
+  // anim (opcional): {pecas:[índices das peças que se mexem] (padrão: todas), f:(t,b)=>({dx,dy,dz,yaw,roll,pitch,piv,ang})}
+  const grupo=(pecas,qtd,raio,esc,cores,anim)=>{
+    const ims=pecas.map(([g,m])=>instancia(g,m,qtd)),bases=[];
+    const n=plantar(qtd,()=>({r:raio}),(i,x,z)=>{const sc=esc[0]+rnd()*(esc[1]-esc[0]),ry=rnd()*Math.PI*2;bases.push({x,z,ry,sc,fase:Math.random()*Math.PI*2});
+      dm.position.set(x,0,z);dm.rotation.set(0,ry,0);dm.scale.set(sc,sc,sc);dm.updateMatrix();
       ims.forEach((im,k)=>{im.setMatrixAt(i,dm.matrix);if(cores&&cores[k])im.setColorAt(i,cor.copy(lin(cores[k][Math.floor(rnd()*cores[k].length)])));});});
-    for(const im of ims){im.count=n;if(im.instanceColor)im.instanceColor.needsUpdate=true;}};
+    for(const im of ims){im.count=n;if(im.instanceColor)im.instanceColor.needsUpdate=true;}
+    if(anim&&n&&!reduzMov)o.animados.push({ims:(anim.pecas||pecas.map((_,k)=>k)).map(k=>ims[k]),bases,f:anim.f});
+    return{ims,bases,n};};
+  // direção de quem anda em círculo (para o bicho olhar para onde vai)
+  const rumo=(a,b)=>Math.atan2(-Math.sin(a),Math.cos(a))-b.ry;
   const arvoresRedondas=(qtd,copas)=>grupo([[new THREE.CylinderGeometry(0.35,0.5,2.6,7).translate(0,1.3,0),mat(tema.tronco)],
     [new THREE.IcosahedronGeometry(2.4,1).translate(0,4.4,0),mat(0xffffff)]],qtd,4,[0.7,1.4],[null,copas]);
   const B=(w,h,d,x,y,z)=>new THREE.BoxGeometry(w,h,d).translate(x,y,z);
@@ -25,7 +30,7 @@ function decorarTema(cena,tema,o){
       for(let i=-1;i<3;i++){x.beginPath();x.moveTo(i*32,h);x.lineTo(i*32+14,h);x.lineTo(i*32+14+h,0);x.lineTo(i*32+h,0);x.fill();}},true);TEX.bengala.repeat.set(2,4);}
     // pirulitos
     grupo([[new THREE.CylinderGeometry(0.12,0.12,6.5,8).translate(0,3.25,0),mat(0xffffff)],
-      [new THREE.CylinderGeometry(2.2,2.2,0.35,28).rotateX(Math.PI/2).translate(0,6.5,0),new THREE.MeshLambertMaterial({map:TEX.pirulito})]],70,3.5,[0.8,1.5]);
+      [new THREE.CylinderGeometry(2.2,2.2,0.35,28).rotateX(Math.PI/2).translate(0,6.5,0),new THREE.MeshLambertMaterial({map:TEX.pirulito})]],70,3.5,[0.8,1.5],null,{f:(t,b)=>({yaw:t*0.8+b.fase})});
     // bengalas
     grupo([[mesclar([new THREE.CylinderGeometry(0.35,0.35,6,12).translate(0,3,0),new THREE.TorusGeometry(1.1,0.35,8,16,Math.PI).translate(1.1,6,0)]),
       new THREE.MeshLambertMaterial({map:TEX.bengala})]],45,3,[0.9,1.4]);
@@ -47,7 +52,7 @@ function decorarTema(cena,tema,o){
     grupo([[corpo,mat(0xffffff)],
       [mesclar([new THREE.SphereGeometry(0.2,8,6).translate(-0.45,8.68,5.2),new THREE.SphereGeometry(0.2,8,6).translate(0.45,8.68,5.2)]),mat(0xffffff)],
       [mesclar([new THREE.SphereGeometry(0.11,6,5).translate(-0.55,8.7,5.3),new THREE.SphereGeometry(0.11,6,5).translate(0.55,8.7,5.3)]),mat(0x111111)]],
-      26,9,[0.8,1.3],[[0x6cc04a,0xff8a3d,0x8a6bff,0x3bb7e0,0xffc93c]]);
+      26,9,[0.8,1.3],[[0x6cc04a,0xff8a3d,0x8a6bff,0x3bb7e0,0xffc93c]],{f:(t,b)=>({yaw:Math.sin(t*0.35+b.fase)*0.6})});
     // vulcões ao longe
     grupo([[new THREE.CylinderGeometry(6,32,26,14).translate(0,13,0),mat(0x5a3b2a)],
       [new THREE.CylinderGeometry(5.6,5.6,0.6,14).translate(0,26,0),brilho(0xff5a1f)],
@@ -61,7 +66,7 @@ function decorarTema(cena,tema,o){
     const aletas=[0,1,2].map(k=>new THREE.BoxGeometry(0.2,2.4,1.6).translate(1.5,2.2,0).rotateY(k*Math.PI*2/3));
     grupo([[new THREE.CylinderGeometry(1.2,1.2,7,16).translate(0,4.5,0),mat(0xf4f4f4)],
       [mesclar([new THREE.ConeGeometry(1.2,3,16).translate(0,9.5,0),...aletas]),mat(0xe3262b)],
-      [new THREE.SphereGeometry(0.45,10,8).scale(1,1,0.4).translate(0,6.5,1.15),brilho(0x7fd4ff)]],14,4,[1,1.4]);
+      [new THREE.SphereGeometry(0.45,10,8).scale(1,1,0.4).translate(0,6.5,1.15),brilho(0x7fd4ff)]],14,4,[1,1.4],null,{f:(t,b)=>{const c=(t+b.fase*4)%26;return{dy:c<16?0:(c-16)*(c-16)*1.8};}});
     // estrelas e a Terra no céu
     const pos=[];for(let i=0;i<1400;i++){const t=rnd()*Math.PI*2,y=rnd()*0.95+0.03,r=Math.sqrt(1-y*y);pos.push(cx+Math.cos(t)*r*1000,y*1000-40,cz+Math.sin(t)*r*1000);}
     const ge=new THREE.BufferGeometry();ge.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
@@ -70,7 +75,7 @@ function decorarTema(cena,tema,o){
       x.fillStyle='#3fae4a';for(let i=0;i<14;i++){x.beginPath();x.ellipse(r()*w,20+r()*(h-40),10+r()*26,8+r()*16,r()*3,0,Math.PI*2);x.fill();}
       x.fillStyle='rgba(255,255,255,0.85)';for(let i=0;i<22;i++){x.beginPath();x.ellipse(r()*w,r()*h,8+r()*22,3+r()*4,0,0,Math.PI*2);x.fill();}});
     const terra=new THREE.Mesh(new THREE.SphereGeometry(70,32,20),new THREE.MeshBasicMaterial({map:TEX.terra,fog:false}));
-    terra.position.set(cx+200,150,cz-480);terra.rotation.z=0.4;cena.add(terra);
+    terra.position.set(cx+200,150,cz-480);terra.rotation.z=0.4;cena.add(terra);o.animados.push({custom:t=>{terra.rotation.y=t*0.05;}});
   }else if(tema.veg==='fazenda'){
     // celeiros
     const fachada=new THREE.Shape([new THREE.Vector2(-5,0),new THREE.Vector2(5,0),new THREE.Vector2(5,7),new THREE.Vector2(0,9.6),new THREE.Vector2(-5,7)]);
@@ -87,7 +92,7 @@ function decorarTema(cena,tema,o){
     grupo([[mesclar([B(1.1,1.0,2.2,0,1.4,0),B(0.8,0.8,0.9,0,1.85,1.45)]),mat(0xf6f6f2)],
       [mesclar([B(0.25,0.9,0.25,-0.4,0.45,-0.8),B(0.25,0.9,0.25,0.4,0.45,-0.8),B(0.25,0.9,0.25,-0.4,0.45,0.8),B(0.25,0.9,0.25,0.4,0.45,0.8),
         B(1.14,0.55,0.8,0,1.55,-0.35),B(0.9,0.15,0.2,0,2.25,1.35)]),mat(0x222222)],
-      [B(0.6,0.35,0.15,0,1.65,1.92),mat(0xf3a6b5)]],26,2,[1,1.2]);
+      [B(0.6,0.35,0.15,0,1.65,1.92),mat(0xf3a6b5)]],26,2,[1,1.2],null,{f:(t,b)=>({yaw:Math.sin(t*0.3+b.fase)*0.7})});
     arvoresRedondas(80,[0x3a8a34,0x4fa63f,0x2f7a2c]);
   }else if(tema.veg==='castelo'){
     // castelos com telhados coloridos
@@ -108,7 +113,7 @@ function decorarTema(cena,tema,o){
     grupo([[mesclar([B(4.4,2.4,11,0,1.6,0),new THREE.ConeGeometry(2.2,4,4).rotateY(Math.PI/4).scale(1,1,1).rotateX(Math.PI/2).scale(1,0.55,1).translate(0,1.9,7.4),B(4.6,0.4,11.2,0,2.9,0),B(4.4,1.6,2.6,0,3.8,-4.2)]),mat(0x7a4a26)],
       [mesclar([new THREE.CylinderGeometry(0.18,0.22,10,8).translate(0,6,-2.6),new THREE.CylinderGeometry(0.16,0.2,8,8).translate(0,5,2.2)]),mat(0x4a3018)],
       [mesclar(velas),mat(0xf3ead2)],
-      [B(1.6,1,0.08,0.8,11.6,-2.6),mat(0x111111)]],8,10,[1,1.3]);
+      [B(1.6,1,0.08,0.8,11.6,-2.6),mat(0x111111)]],8,10,[1,1.3],null,{f:(t,b)=>({roll:Math.sin(t*0.9+b.fase)*0.06,pitch:Math.sin(t*0.7+b.fase)*0.03})});
     // baús de tesouro
     grupo([[mesclar([B(1.6,1,1,0,0.5,0),new THREE.CylinderGeometry(0.5,0.5,1.6,12,1,false,0,Math.PI).rotateZ(Math.PI/2).translate(0,1,0)]),mat(0x8a5a2b)],
       [mesclar([B(1.66,0.15,1.06,0,0.2,0),B(1.66,0.15,1.06,0,0.85,0),B(0.3,0.4,0.08,0,0.8,0.52)]),mat(0xffc93c)]],30,2,[0.9,1.4]);
@@ -122,7 +127,7 @@ function decorarTema(cena,tema,o){
       [mesclar(pintas),mat(0xffffff)]],70,4,[0.6,1.8],[null,[0xe8202a,0xff8a1f,0x9b5bd6,0x2f8fff]]);
     // florzinhas coloridas
     grupo([[new THREE.CylinderGeometry(0.05,0.06,1.2,5).translate(0,0.6,0),mat(0x3e8f2f)],
-      [new THREE.IcosahedronGeometry(0.35,0).translate(0,1.3,0),mat(0xffffff)]],260,1,[0.8,1.5],[null,[0xff6fb5,0xffd21f,0xffffff,0xb36bff,0xff8a2b]]);
+      [new THREE.IcosahedronGeometry(0.35,0).translate(0,1.3,0),mat(0xffffff)]],260,1,[0.8,1.5],[null,[0xff6fb5,0xffd21f,0xffffff,0xb36bff,0xff8a2b]],{f:(t,b)=>({roll:Math.sin(t*1.5+b.fase)*0.12})});
     arvoresRedondas(70,[0x3a8a34,0x4fa63f]);
   }else if(tema.veg==='polo'){
     // iglus
@@ -132,7 +137,7 @@ function decorarTema(cena,tema,o){
     grupo([[mesclar([new THREE.SphereGeometry(1,12,10).scale(0.7,1.1,0.6).translate(0,1.1,0),new THREE.SphereGeometry(0.45,10,8).translate(0,2.2,0),
         new THREE.SphereGeometry(0.25,6,5).scale(0.5,1.4,0.8).translate(-0.72,1.2,0),new THREE.SphereGeometry(0.25,6,5).scale(0.5,1.4,0.8).translate(0.72,1.2,0)]),mat(0x1b1d24)],
       [mesclar([new THREE.SphereGeometry(1,12,10).scale(0.55,0.9,0.4).translate(0,1.0,0.25),new THREE.SphereGeometry(0.12,6,5).translate(-0.17,2.3,0.38),new THREE.SphereGeometry(0.12,6,5).translate(0.17,2.3,0.38)]),mat(0xffffff)],
-      [mesclar([new THREE.ConeGeometry(0.12,0.4,6).rotateX(Math.PI/2).translate(0,2.15,0.55),B(0.35,0.1,0.5,-0.25,0.05,0.2),B(0.35,0.1,0.5,0.25,0.05,0.2)]),mat(0xff9a1f)]],70,2.5,[1.3,2]);
+      [mesclar([new THREE.ConeGeometry(0.12,0.4,6).rotateX(Math.PI/2).translate(0,2.15,0.55),B(0.35,0.1,0.5,-0.25,0.05,0.2),B(0.35,0.1,0.5,0.25,0.05,0.2)]),mat(0xff9a1f)]],70,2.5,[1.3,2],null,{f:(t,b)=>({roll:Math.sin(t*5+b.fase)*0.12,yaw:Math.sin(t*0.4+b.fase)*0.6})});
     // bonecos de neve
     grupo([[mesclar([new THREE.SphereGeometry(1.2,12,10).translate(0,1.1,0),new THREE.SphereGeometry(0.85,12,10).translate(0,2.8,0),new THREE.SphereGeometry(0.6,12,10).translate(0,4.0,0)]),mat(0xffffff)],
       [new THREE.ConeGeometry(0.12,0.6,6).rotateX(Math.PI/2).translate(0,4.0,0.85),mat(0xff7a1f)],
@@ -141,8 +146,10 @@ function decorarTema(cena,tema,o){
     grupo([[new THREE.DodecahedronGeometry(1.8,0).scale(1,0.8,1.2).translate(0,0.8,0),new THREE.MeshStandardMaterial({color:lin(0xbfe8ff),roughness:0.2,metalness:0.1})]],50,3,[0.6,2]);
   }else if(tema.veg==='obra'){
     // guindastes
-    grupo([[mesclar([B(1.2,22,1.2,0,11,0),B(1,1,22,0,22.5,5),B(1.6,1.6,1.6,0,21.4,0)]),mat(0xffc21f)],
-      [mesclar([B(2.2,1.8,2.4,0,22.5,-5),B(0.06,8,0.06,0,18.5,13),B(0.5,0.6,0.3,0,14.4,13),B(3.4,0.6,3.4,0,0.3,0)]),mat(0x55585e)]],6,14,[0.9,1.2]);
+    grupo([[B(1.2,22,1.2,0,11,0),mat(0xffc21f)],[B(3.4,0.6,3.4,0,0.3,0),mat(0x55585e)],
+      [mesclar([B(1,1,22,0,22.5,5),B(1.6,1.6,1.6,0,21.4,0)]),mat(0xffc21f)],
+      [mesclar([B(2.2,1.8,2.4,0,22.5,-5),B(0.06,8,0.06,0,18.5,13),B(0.5,0.6,0.3,0,14.4,13)]),mat(0x55585e)]],6,14,[0.9,1.2],null,
+      {pecas:[2,3],f:(t,b)=>({yaw:Math.sin(t*0.15+b.fase)*1.6})});
     // caminhões basculantes
     const rodas=[[-1.2,1.6],[1.2,1.6],[-1.2,-0.8],[1.2,-0.8],[-1.2,-2],[1.2,-2]].map(([x,z])=>new THREE.CylinderGeometry(0.6,0.6,0.5,12).rotateZ(Math.PI/2).translate(x,0.6,z));
     grupo([[mesclar([B(2.2,1.8,1.6,0,1.9,2.2),B(2.4,1.4,3.6,0,2.2,-1.2)]),mat(0xffb01f)],
@@ -155,18 +162,26 @@ function decorarTema(cena,tema,o){
   }else if(tema.veg==='parque'){
     if(!TEX.circo){TEX.circo=tex(64,16,(x,w,h)=>{for(let i=0;i<8;i++){x.fillStyle=i%2?'#ffffff':'#e8202a';x.fillRect(i*8,0,8,h);}},true);TEX.circo.repeat.set(2,1);}
     // rodas-gigantes
-    const raios=[],cab=[];for(let k=0;k<10;k++){const a=k*Math.PI/5;raios.push(B(0.25,12,0.25,0,0,0).translate(0,6,0).rotateZ(a).translate(0,14,0));
-      cab.push(B(1.6,1.6,1.6,12*Math.cos(a),14+12*Math.sin(a)-1.3,0));}
-    grupo([[mesclar([new THREE.TorusGeometry(12,0.35,6,48).translate(0,14,0),...raios,B(0.5,15,0.5,0,7,0).rotateZ(0.35).translate(-2.4,0,1.5),B(0.5,15,0.5,0,7,0).rotateZ(-0.35).translate(2.4,0,1.5),
-        B(0.5,15,0.5,0,7,0).rotateZ(0.35).translate(-2.4,0,-1.5),B(0.5,15,0.5,0,7,0).rotateZ(-0.35).translate(2.4,0,-1.5)]),mat(0xf2f2f2)],
-      [mesclar(cab),mat(0xffffff)]],5,14,[0.9,1.2],[null,[0xe8202a,0x2f8fff,0xffc21f,0x3fbf3f]]);
+    const raios=[];for(let k=0;k<10;k++)raios.push(B(0.25,12,0.25,0,0,0).translate(0,6,0).rotateZ(k*Math.PI/5).translate(0,14,0));
+    const pernas=[[0.35,-2.4,1.5],[-0.35,2.4,1.5],[0.35,-2.4,-1.5],[-0.35,2.4,-1.5]].map(([r,x,z])=>B(0.5,15,0.5,0,7,0).rotateZ(r).translate(x,0,z));
+    const rodas=grupo([[mesclar(pernas),mat(0xf2f2f2)],[mesclar([new THREE.TorusGeometry(12,0.35,6,48).translate(0,14,0),...raios]),mat(0xf2f2f2)]],5,14,[0.9,1.2],null,
+      {pecas:[1],f:(t,b)=>({piv:14,ang:t*0.25+b.fase})});
+    // cabines penduradas: giram com a roda e ficam sempre de pé
+    const nc=rodas.n*10,cabs=instancia(B(1.6,1.6,1.6,0,0,0),mat(0xffffff),Math.max(1,nc));cabs.count=nc;
+    const coresCab=[0xe8202a,0x2f8fff,0xffc21f,0x3fbf3f].map(lin);
+    const porCab=t=>{rodas.bases.forEach((b,w)=>{const ang=t*0.25+b.fase,c=Math.cos(b.ry),sn=Math.sin(b.ry);
+      for(let k=0;k<10;k++){const a=k*Math.PI/5+ang,lx=12*Math.cos(a)*b.sc,ly=(14+12*Math.sin(a)-1.3)*b.sc;
+        dm.position.set(b.x+lx*c,ly,b.z-lx*sn);dm.rotation.set(0,b.ry,0);dm.scale.setScalar(b.sc);dm.updateMatrix();cabs.setMatrixAt(w*10+k,dm.matrix);}});
+      cabs.instanceMatrix.needsUpdate=true;};
+    for(let i=0;i<nc;i++)cabs.setColorAt(i,coresCab[Math.floor(i/10)%4]);if(cabs.instanceColor)cabs.instanceColor.needsUpdate=true;
+    porCab(0);if(!reduzMov)o.animados.push({custom:porCab});
     // tendas de circo
     grupo([[new THREE.CylinderGeometry(6,6,5,20).translate(0,2.5,0),new THREE.MeshLambertMaterial({map:TEX.circo})],
       [new THREE.ConeGeometry(7,5,20).translate(0,7.5,0),new THREE.MeshLambertMaterial({map:TEX.circo})],
       [mesclar([new THREE.CylinderGeometry(0.08,0.08,2,6).translate(0,10.8,0),B(1.2,0.7,0.06,0.6,11.4,0)]),mat(0xffc21f)]],7,8,[0.9,1.2]);
     // balões coloridos
     grupo([[new THREE.SphereGeometry(0.8,12,10).scale(1,1.2,1).translate(0,6.5,0),mat(0xffffff)],[B(0.03,5.6,0.03,0,2.8,0),mat(0xeeeeee)]],
-      60,1.5,[0.8,1.3],[[0xe8202a,0x2f8fff,0xffc21f,0x3fbf3f,0xff6fb5,0xb36bff]]);
+      60,1.5,[0.8,1.3],[[0xe8202a,0x2f8fff,0xffc21f,0x3fbf3f,0xff6fb5,0xb36bff]],{f:(t,b)=>({dy:Math.sin(t*0.9+b.fase)*0.8,roll:Math.sin(t*0.7+b.fase)*0.05})});
     arvoresRedondas(70,[0x3a8a34,0x4fa63f]);
   }else if(tema.veg==='fundo'){
     // corais coloridos
@@ -175,19 +190,19 @@ function decorarTema(cena,tema,o){
       new THREE.SphereGeometry(0.3,7,5).translate(0,2.6,0)]),mat(0xffffff)]],130,2,[0.8,2],[[0xff6fb5,0xff8a3d,0xb36bff,0xffd23f,0xff4d4d]]);
     // algas
     const alga=[];for(let k=0;k<6;k++)alga.push(new THREE.BoxGeometry(0.35,1.3,0.1).translate(0,0.65,0).rotateZ((k%2?0.18:-0.18)).translate((k%2?0.12:-0.12),k*1.2,0));
-    grupo([[mesclar(alga),mat(0x2f9a4a,{side:THREE.DoubleSide})]],150,1.2,[0.8,1.6]);
+    grupo([[mesclar(alga),mat(0x2f9a4a,{side:THREE.DoubleSide})]],150,1.2,[0.8,1.6],null,{f:(t,b)=>({roll:Math.sin(t*1.2+b.fase)*0.15})});
     // estrelas-do-mar
     grupo([[mesclar([0,1,2,3,4].map(k=>new THREE.ConeGeometry(0.28,1.1,5).rotateZ(-Math.PI/2).translate(0.55,0.12,0).rotateY(k*Math.PI*2/5))),mat(0xffffff)]],90,1.2,[0.9,1.6],[[0xff7a3d,0xff5e8a,0xffc23d]]);
     // peixinhos nadando
     grupo([[mesclar([new THREE.SphereGeometry(1,12,8).scale(0.45,0.7,1).translate(0,4,0),new THREE.ConeGeometry(0.55,0.8,4).rotateX(-Math.PI/2).scale(0.3,1,1).translate(0,4,-1.25)]),mat(0xffffff)],
       [mesclar([new THREE.SphereGeometry(0.13,6,5).translate(-0.38,4.2,0.55),new THREE.SphereGeometry(0.13,6,5).translate(0.38,4.2,0.55)]),mat(0x111111)]],
-      90,2,[0.8,1.7],[[0xffb01f,0xff5e3a,0x3bc4ff,0xffe14d,0xb36bff]]);
+      90,2,[0.8,1.7],[[0xffb01f,0xff5e3a,0x3bc4ff,0xffe14d,0xb36bff]],{f:(t,b)=>{const a=t*0.4+b.fase;return{dx:Math.cos(a)*6,dz:Math.sin(a)*6,dy:Math.sin(t+b.fase)*0.5,yaw:rumo(a,b)};}});
     // submarinos amarelos
     grupo([[mesclar([new THREE.SphereGeometry(1,16,10).scale(1.5,1.5,3.6).translate(0,7,0),B(1,1.4,1.6,0,8.9,0.4),new THREE.CylinderGeometry(0.12,0.12,1.4,6).translate(0,10.2,0.8),
       B(2.6,0.1,0.6,0,7,-3.6)]),mat(0xffd21f)],
-      [mesclar([-1.2,0,1.2].map(z=>new THREE.CylinderGeometry(0.35,0.35,3.1,12).rotateZ(Math.PI/2).translate(0,7.2,z))),brilho(0x9fe4ff)]],6,6,[1,1.3]);
+      [mesclar([-1.2,0,1.2].map(z=>new THREE.CylinderGeometry(0.35,0.35,3.1,12).rotateZ(Math.PI/2).translate(0,7.2,z))),brilho(0x9fe4ff)]],6,6,[1,1.3],null,{f:(t,b)=>({dy:Math.sin(t*0.6+b.fase)*0.8,yaw:Math.sin(t*0.1+b.fase)*0.8})});
     // bolhas
-    grupo([[new THREE.SphereGeometry(0.3,8,6).translate(0,3,0),mat(0xdff6ff,{transparent:true,opacity:0.55})]],160,0.5,[0.6,3]);
+    grupo([[new THREE.SphereGeometry(0.3,8,6).translate(0,3,0),mat(0xdff6ff,{transparent:true,opacity:0.55})]],160,0.5,[0.6,3],null,{f:(t,b)=>({dy:(t*1.2+b.fase*3)%10})});
   }else if(tema.veg==='safari'){
     // acácias
     grupo([[mesclar([new THREE.CylinderGeometry(0.3,0.45,5,7).translate(0,2.5,0),new THREE.CylinderGeometry(0.15,0.2,2.2,6).rotateZ(0.7).translate(-0.7,5.4,0)]),mat(tema.tronco)],
@@ -200,12 +215,12 @@ function decorarTema(cena,tema,o){
         new THREE.CylinderGeometry(0.22,0.35,4,8).rotateX(0.35).translate(0,6.0,1.6),new THREE.SphereGeometry(1,10,8).scale(0.35,0.35,0.6).translate(0,8,2.5)]),mat(0xf2c14e)],
       [mesclar([B(0.4,0.3,0.4,0.85,3.9,0.4),B(0.4,0.3,0.4,-0.85,3.6,-0.5),B(0.4,0.3,0.4,0.85,3.3,-0.7),B(0.4,0.3,0.4,-0.85,4.0,0.6),B(0.4,0.4,0.2,0,4.2,1.45),
         new THREE.CylinderGeometry(0.06,0.06,0.5,5).translate(-0.15,8.45,2.3),new THREE.CylinderGeometry(0.06,0.06,0.5,5).translate(0.15,8.45,2.3),
-        new THREE.SphereGeometry(0.08,5,4).translate(-0.3,8.1,2.75),new THREE.SphereGeometry(0.08,5,4).translate(0.3,8.1,2.75)]),mat(0x7a4a1e)]],28,4,[1,1.4]);
+        new THREE.SphereGeometry(0.08,5,4).translate(-0.3,8.1,2.75),new THREE.SphereGeometry(0.08,5,4).translate(0.3,8.1,2.75)]),mat(0x7a4a1e)]],28,4,[1,1.4],null,{f:(t,b)=>({yaw:Math.sin(t*0.3+b.fase)*0.5})});
     // elefantes
     grupo([[mesclar([new THREE.SphereGeometry(1,14,10).scale(1.5,1.4,2.1).translate(0,2.9,0),...pernas(0.8,1.1,2.2,0.4),new THREE.SphereGeometry(0.95,12,10).translate(0,3.6,2.2),
         new THREE.CylinderGeometry(0.22,0.32,1.6,8).rotateX(0.25).translate(0,2.6,3.0),new THREE.CylinderGeometry(0.18,0.22,1.0,8).rotateX(-0.6).translate(0,1.65,3.35),
         new THREE.CylinderGeometry(1,1,0.12,14).rotateZ(Math.PI/2).rotateY(0.4).translate(-1,3.7,1.8),new THREE.CylinderGeometry(1,1,0.12,14).rotateZ(Math.PI/2).rotateY(-0.4).translate(1,3.7,1.8)]),mat(0x9b9ea6)],
-      [mesclar([new THREE.SphereGeometry(0.12,6,5).translate(-0.45,3.9,2.95),new THREE.SphereGeometry(0.12,6,5).translate(0.45,3.9,2.95)]),mat(0x111111)]],20,5,[1,1.3]);
+      [mesclar([new THREE.SphereGeometry(0.12,6,5).translate(-0.45,3.9,2.95),new THREE.SphereGeometry(0.12,6,5).translate(0.45,3.9,2.95)]),mat(0x111111)]],20,5,[1,1.3],null,{f:(t,b)=>({yaw:Math.sin(t*0.25+b.fase)*0.5,roll:Math.sin(t*1.6+b.fase)*0.02})});
   }else if(tema.veg==='futuro'){
     // torres de vidro com anéis de neon
     grupo([[new THREE.CylinderGeometry(3.6,4.2,30,12).translate(0,15,0),new THREE.MeshStandardMaterial({color:lin(0x2a3f7a),roughness:0.2,metalness:0.7})],
@@ -214,12 +229,12 @@ function decorarTema(cena,tema,o){
     // discos voadores
     grupo([[new THREE.SphereGeometry(1,20,8).scale(3,0.55,3).translate(0,13,0),new THREE.MeshStandardMaterial({color:lin(0xbfc6d2),roughness:0.3,metalness:0.6})],
       [new THREE.SphereGeometry(1.3,14,10,0,Math.PI*2,0,Math.PI/2).translate(0,13.3,0),brilho(0x7fe8ff)],
-      [mesclar([0,1,2,3,4,5,6,7].map(k=>new THREE.SphereGeometry(0.22,6,5).translate(2.9*Math.cos(k*Math.PI/4),12.9,2.9*Math.sin(k*Math.PI/4)))),brilho(0xffe14d)]],16,4,[0.9,1.4]);
+      [mesclar([0,1,2,3,4,5,6,7].map(k=>new THREE.SphereGeometry(0.22,6,5).translate(2.9*Math.cos(k*Math.PI/4),12.9,2.9*Math.sin(k*Math.PI/4)))),brilho(0xffe14d)]],16,4,[0.9,1.4],null,{f:(t,b)=>{const a=t*0.3+b.fase;return{dx:Math.cos(a)*10,dz:Math.sin(a)*10,dy:Math.sin(t*1.3+b.fase)*1.2,yaw:t*1.5};}});
     // robozinhos
     grupo([[mesclar([B(1.2,1.4,0.8,0,1.5,0),B(0.9,0.8,0.8,0,2.65,0),B(0.3,0.8,0.3,-0.35,0.4,0),B(0.3,0.8,0.3,0.35,0.4,0),B(0.25,1,0.25,-0.75,1.5,0),B(0.25,1,0.25,0.75,1.5,0),
         new THREE.CylinderGeometry(0.04,0.04,0.5,5).translate(0,3.3,0)]),new THREE.MeshStandardMaterial({color:lin(0xd8dde6),roughness:0.4,metalness:0.5})],
       [mesclar([B(0.18,0.18,0.05,-0.2,2.7,0.41),B(0.18,0.18,0.05,0.2,2.7,0.41),B(0.5,0.3,0.05,0,1.6,0.41)]),brilho(0x19e0d0)],
-      [new THREE.SphereGeometry(0.14,8,6).translate(0,3.6,0),brilho(0xff3b3b)]],34,1.5,[1,1.6]);
+      [new THREE.SphereGeometry(0.14,8,6).translate(0,3.6,0),brilho(0xff3b3b)]],34,1.5,[1,1.6],null,{f:(t,b)=>({roll:Math.sin(t*4+b.fase)*0.08,yaw:Math.sin(t*0.5+b.fase)*0.8})});
     // céu estrelado
     const pos=[];for(let i=0;i<900;i++){const t=rnd()*Math.PI*2,y=rnd()*0.95+0.03,r=Math.sqrt(1-y*y);pos.push(cx+Math.cos(t)*r*1000,y*1000-40,cz+Math.sin(t)*r*1000);}
     const ge=new THREE.BufferGeometry();ge.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
@@ -242,7 +257,7 @@ function decorarTema(cena,tema,o){
     const pinos=[];for(const x of [-0.5,0.5])for(const z of [-1.5,-0.5,0.5,1.5])pinos.push(new THREE.CylinderGeometry(0.3,0.3,0.3,10).translate(x,1.35,z));
     grupo([[mesclar([B(2,1.2,4,0,0.6,0),...pinos]),new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.35})]],80,4,[1,2.6],[[0xe8202a,0x2f8fff,0xffc21f,0x3fbf3f,0xff8a1f]]);
     // bolas
-    grupo([[new THREE.SphereGeometry(1.5,18,12).translate(0,1.5,0),new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.3})]],40,4,[1,2.6],[[0xff3b6b,0x3bc4ff,0xffd23f,0x7bd85a,0xb36bff]]);
+    grupo([[new THREE.SphereGeometry(1.5,18,12).translate(0,1.5,0),new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.3})]],40,4,[1,2.6],[[0xff3b6b,0x3bc4ff,0xffd23f,0x7bd85a,0xb36bff]],{f:(t,b)=>({dy:Math.abs(Math.sin(t*2.2+b.fase))*3})});
     // ursinhos de pelúcia
     grupo([[mesclar([new THREE.SphereGeometry(1.2,14,10).scale(1,1.15,0.9).translate(0,1.6,0),new THREE.SphereGeometry(0.9,14,10).translate(0,3.3,0),
         new THREE.SphereGeometry(0.32,8,6).translate(-0.7,4.0,0),new THREE.SphereGeometry(0.32,8,6).translate(0.7,4.0,0),
@@ -263,7 +278,7 @@ function decorarTema(cena,tema,o){
     grupo([[new THREE.SphereGeometry(3,18,14).scale(1,1.2,1).translate(0,15,0),mat(0xffffff)],
       [mesclar([new THREE.TorusGeometry(3.02,0.25,6,28).rotateX(Math.PI/2).translate(0,15,0),new THREE.TorusGeometry(2.6,0.25,6,28).rotateX(Math.PI/2).translate(0,13.2,0)]),mat(0xffffff)],
       [mesclar([B(1.6,1.2,1.6,0,9.2,0),...[[-0.7,-0.7],[0.7,-0.7],[-0.7,0.7],[0.7,0.7]].map(([x,z])=>B(0.06,2.6,0.06,x,11,z))]),mat(0x8a5a2b)]],
-      22,5,[1,1.5],[[0xe8202a,0x2f8fff,0xffc21f,0xff6fb5,0x3fbf3f,0xff8a1f],[0xffd21f,0xffffff]]);
+      22,5,[1,1.5],[[0xe8202a,0x2f8fff,0xffc21f,0xff6fb5,0x3fbf3f,0xff8a1f],[0xffd21f,0xffffff]],{f:(t,b)=>({dy:Math.sin(t*0.4+b.fase)*3,yaw:t*0.08})});
   }else if(tema.veg==='joaninha'){
     // flores gigantes
     grupo([[new THREE.CylinderGeometry(0.25,0.3,8,8).translate(0,4,0),mat(0x3e8f2f)],
@@ -274,12 +289,12 @@ function decorarTema(cena,tema,o){
     const pontos=[[0.5,0.55,0.2],[-0.5,0.55,0.2],[0.55,0.45,-0.5],[-0.55,0.45,-0.5],[0.3,0.75,-0.15],[-0.3,0.75,-0.15]].map(([x,y,z])=>new THREE.SphereGeometry(0.17,6,5).translate(x,y,z));
     grupo([[new THREE.SphereGeometry(1,16,10,0,Math.PI*2,0,Math.PI/2).scale(0.9,0.85,1.1).translate(0,0.1,0),mat(0xe8202a)],
       [mesclar([new THREE.SphereGeometry(0.42,10,8).translate(0,0.3,1.05),B(0.05,0.02,2.1,0,0.95,-0.05),...pontos]),mat(0x151515)],
-      [mesclar([new THREE.SphereGeometry(0.11,6,5).translate(-0.18,0.45,1.38),new THREE.SphereGeometry(0.11,6,5).translate(0.18,0.45,1.38)]),mat(0xffffff)]],45,3,[1.4,2.6]);
+      [mesclar([new THREE.SphereGeometry(0.11,6,5).translate(-0.18,0.45,1.38),new THREE.SphereGeometry(0.11,6,5).translate(0.18,0.45,1.38)]),mat(0xffffff)]],45,3,[1.4,2.6],null,{f:(t,b)=>({yaw:t*0.15*(b.fase>Math.PI?1:-1)})});
     // abelhas voando
     grupo([[new THREE.SphereGeometry(1,12,10).scale(0.55,0.55,0.85).translate(0,5,0),mat(0xffc21f)],
       [mesclar([new THREE.TorusGeometry(0.55,0.08,6,16).scale(1,1,1).translate(0,5,0.15),new THREE.TorusGeometry(0.5,0.08,6,16).translate(0,5,-0.3),new THREE.SphereGeometry(0.1,6,5).translate(-0.2,5.15,0.78),new THREE.SphereGeometry(0.1,6,5).translate(0.2,5.15,0.78)]),mat(0x151515)],
       [mesclar([new THREE.SphereGeometry(0.5,8,6).scale(0.9,0.12,0.5).rotateZ(0.5).translate(-0.6,5.6,0),new THREE.SphereGeometry(0.5,8,6).scale(0.9,0.12,0.5).rotateZ(-0.5).translate(0.6,5.6,0)]),
-        mat(0xffffff,{transparent:true,opacity:0.75})]],40,2,[1,1.6]);
+        mat(0xffffff,{transparent:true,opacity:0.75})]],40,2,[1,1.6],null,{f:(t,b)=>{const a=t*1.2+b.fase;return{dx:Math.cos(a)*3,dz:Math.sin(a)*3,dy:Math.sin(t*3+b.fase)*0.4,yaw:rumo(a,b)};}});
     grupo([[new THREE.ConeGeometry(0.35,1.4,4).translate(0,0.7,0),mat(0x4fa63f)]],220,0.8,[0.8,1.6]);
   }else if(tema.veg==='natal'){
     // árvores de Natal com bolinhas e estrela
@@ -314,3 +329,14 @@ function decorarTema(cena,tema,o){
   }
 }
 
+/* cenário com movimento: a cada quadro recalcula a posição das instâncias que se mexem */
+const _anim=new THREE.Object3D(),_piv=new THREE.Matrix4(),_aux=new THREE.Matrix4();_anim.rotation.order='YXZ';
+function animarCenario(lista,t){
+  for(const a of lista){
+    if(a.custom){a.custom(t);continue;}
+    for(let i=0;i<a.bases.length;i++){const b=a.bases[i],r=a.f(t,b);
+      _anim.position.set(b.x+(r.dx||0),r.dy||0,b.z+(r.dz||0));_anim.rotation.set(r.pitch||0,b.ry+(r.yaw||0),r.roll||0);_anim.scale.setScalar(b.sc);_anim.updateMatrix();
+      if(r.piv!==undefined){_piv.makeTranslation(0,r.piv,0).multiply(_aux.makeRotationZ(r.ang)).multiply(_aux.makeTranslation(0,-r.piv,0));_anim.matrix.multiply(_piv);}
+      for(const im of a.ims)im.setMatrixAt(i,_anim.matrix);}
+    for(const im of a.ims)im.instanceMatrix.needsUpdate=true;}
+}

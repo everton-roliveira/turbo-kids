@@ -63,7 +63,7 @@ function montarPonte(cena,pt){
       ant.copy(b);}}
 }
 function montarCenario(cena,tema,extras){
-  const rnd=P.rnd;
+  const rnd=P.rnd,animados=[];
   const chao=new THREE.Mesh(new THREE.PlaneGeometry(4000,4000).rotateX(-Math.PI/2),new THREE.MeshLambertMaterial({color:lin(tema.chao)}));chao.position.y=-0.06;chao.receiveShadow=true;cena.add(chao);
   const asf=new THREE.Mesh(fitaH(-HW,HW,0,20),new THREE.MeshStandardMaterial({map:TEX.asfalto,roughness:0.85,metalness:0,side:THREE.DoubleSide}));asf.receiveShadow=true;cena.add(asf);
   const mz=new THREE.MeshLambertMaterial({map:TEX.zebra,side:THREE.DoubleSide});
@@ -97,7 +97,8 @@ function montarCenario(cena,tema,extras){
   const plantar=(qtd,raio,fn)=>{let n=0;for(let t=0;t<qtd*6&&n<qtd;t++){const x=minX-120+rnd()*(maxX-minX+240),z=minZ-120+rnd()*(maxZ-minZ+240),r=raio();
     if(!livre(x,z,r.r))continue;fn(n,x,z,r);n++;}return n;};
   const dm=new THREE.Object3D();
-  const instancia=(geo,mat,qtd,sombra)=>{const im=new THREE.InstancedMesh(geo,mat,qtd);if(sombra)im.castShadow=true;cena.add(im);return im;};
+  // frustumCulled=false: as instâncias ficam espalhadas pelo mapa, longe da origem do objeto
+  const instancia=(geo,mat,qtd,sombra)=>{const im=new THREE.InstancedMesh(geo,mat,qtd);im.frustumCulled=false;if(sombra)im.castShadow=true;cena.add(im);return im;};
   const palmeiras=qtd=>{const tr=instancia(new THREE.CylinderGeometry(0.28,0.45,8,7).translate(0,4,0).rotateZ(0.12),new THREE.MeshLambertMaterial({color:lin(tema.tronco)}),qtd);
     const folhas=[];for(let k=0;k<7;k++)folhas.push(new THREE.BoxGeometry(0.9,0.1,4.4).translate(0,0,2.1).rotateX(0.38).rotateY(k*Math.PI*2/7).translate(-0.96,7.95,0));
     const fo=instancia(mesclar(folhas),new THREE.MeshLambertMaterial({color:lin(tema.arvore),side:THREE.DoubleSide}),qtd);
@@ -112,7 +113,7 @@ function montarCenario(cena,tema,extras){
     if(im.instanceColor)im.instanceColor.needsUpdate=true;
   }else if(tema.veg==='palmeira'){palmeiras(160);
   }else if(['doce','dino','lua','fazenda','castelo','pirata','cogumelo','polo','obra','parque','fundo','safari','futuro','cerejeira','brinquedo','nuvem','joaninha','natal','trem'].includes(tema.veg)){
-    decorarTema(cena,tema,{plantar,instancia,dm,rnd,palmeiras,centro:[(minX+maxX)/2,(minZ+maxZ)/2]});
+    decorarTema(cena,tema,{plantar,instancia,dm,rnd,palmeiras,animados,centro:[(minX+maxX)/2,(minZ+maxZ)/2]});
   }else if(tema.veg==='cacto'){
     const g=mesclar([new THREE.CylinderGeometry(0.5,0.55,5,8).translate(0,2.5,0),new THREE.SphereGeometry(0.5,8,6).translate(0,5,0),
       new THREE.CylinderGeometry(0.3,0.3,1.4,7).rotateZ(Math.PI/2).translate(0.9,2.2,0),new THREE.CylinderGeometry(0.3,0.3,1.8,7).translate(1.5,3.0,0),new THREE.SphereGeometry(0.3,7,5).translate(1.5,3.9,0),
@@ -128,5 +129,6 @@ function montarCenario(cena,tema,extras){
       dm.rotation.set(0,0,0);dm.position.set(x,0.9*sc,z);dm.scale.set(sc,sc,sc);dm.updateMatrix();tronco.setMatrixAt(n,dm.matrix);
       dm.position.set(x,(1.8+3)*sc,z);dm.updateMatrix();copa.setMatrixAt(n,dm.matrix);});
   }
+  return animados;
 }
 

@@ -66,6 +66,8 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 24. Vila do Natal: árvores de Natal com bolinhas, presentes e casinhas com neve
 25. Estação de Trem: trens coloridos nos trilhos, estações e caixas d'água
 
+Os cenários se mexem: peixes e abelhas nadam e voam em círculo, balões sobem e descem, a roda-gigante gira, foguetes decolam na Lua, guindastes viram, navios balançam, pinguins rebolam e bolas quicam.
+
 A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois da pista 25 os cenários se repetem com traçados novos.
 
 ## Para crianças pequenas

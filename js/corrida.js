@@ -108,7 +108,7 @@ function iniciarCorrida(){
   Object.assign(sol.shadow.camera,{left:-32,right:32,top:32,bottom:-32,near:10,far:300});sol.shadow.bias=-0.0006;sol.shadow.normalBias=0.02;
   cena.add(sol,sol.target);
   const obs=gerarObstaculos(p,nivel);
-  montarCenario(cena,tema,obs);
+  const animados=montarCenario(cena,tema,obs);
   const {moedasMesh}=montarObstaculos(cena,obs);
   // adversários: cada um é um modelo diferente
   const rivais=ORDEM_MODELOS.filter(id=>id!==save.modelo);
@@ -128,7 +128,7 @@ function iniciarCorrida(){
     else Object.assign(c,{vmax:p.aiVmax+(P.rnd()*2-1)*4,acel:p.iaAcel,lat:7,latRam:nivel<=4?9:13,rateLat:5,fatorLento:0.5,lentoDur:1.5,perdaBuraco:0.45});
     carros.push(c);
   }
-  corrida={cena,sol,p,obs,carros,jogador,tema,nivel,moedasMesh,ordem:[],contagem:3.6,ultimoNum:4,fimT:0,mostrou:false,
+  corrida={cena,sol,p,obs,carros,jogador,tema,nivel,animados,tCen:0,moedasMesh,ordem:[],contagem:3.6,ultimoNum:4,fimT:0,mostrou:false,
     pegas:0,posAnt:4,voltaAnt:0,turboAvisado:true,t:0,tut:null};
   const barra=$('#hProg');barra.innerHTML='';
   for(const c of carros){const el=document.createElement('i');el.className='ponto'+(c.ehJogador?' eu':'');el.style.background=c.cor;barra.appendChild(el);c.ponto=el;}
@@ -345,6 +345,7 @@ function narrar(){
   if(volta!==corrida.voltaAnt){corrida.voltaAnt=volta;if(volta===corrida.p.voltas-1)Voz.falar('Última volta!',{urgente:true});}
 }
 function atualizarCorrida(dt){
+  corrida.tCen+=dt;animarCenario(corrida.animados,corrida.tCen);
   const ct=$('#contagem');
   atualizarMoedas(dt);
   if(modo==='contagem'){
