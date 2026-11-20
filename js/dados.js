@@ -98,6 +98,8 @@ const TEMAS=[
   {nome:'Estação de Trem',musica:'trem',ico:'🚂',ceu:0xa9d8ff,ceuTopo:0x4a8fe0,nevoa:0xdcefff,chao:0x7cbf4a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'trem'},
 ];
 const temaDoNivel=n=>TEMAS[(n-1)%TEMAS.length];
+// pista escolhida no mapa (só as já liberadas; sem escolha = a última liberada)
+const pistaAtual=()=>clamp(Math.round(save.pista||save.nivel),1,save.nivel);
 const ADESIVOS=[['nenhum','Nenhum'],['raio','⚡ Raio'],['chamas','🔥 Chamas'],['estrelas','⭐ Estrelas'],['listras','🏁 Listras']];
 const AROS=[['#d6d9de','Prata'],['#2a2c31','Preto'],['#d4a017','Dourado'],['#f2f2f2','Branco'],['#d40000','Vermelho'],['#1e5bd8','Azul']];
 /* cada carro tem sua buzina (duas notas) */

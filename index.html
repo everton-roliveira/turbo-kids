@@ -25,7 +25,7 @@
     <div class="g-nome" id="gNomeCarro"></div>
   </div>
   <div class="g-painel">
-    <div class="g-pista"><b>Pista <span id="gNivel">1</span></b><small id="gTema">Campo Verde</small></div>
+    <button id="gPista" class="g-pista"><b>Pista <span id="gNivel">1</span></b><small id="gTema">Campo Verde</small><span class="g-trocar">🗺️ Trocar</span></button>
     <section><h2>Escolha o carro</h2><div class="modelos" id="gModelos"></div></section>
     <section><h2>Cor do carro</h2><div class="cores" id="gCores"></div></section>
     <button id="gCorrer" class="bt-grande">CORRER! 🏁</button>
@@ -98,6 +98,15 @@
     <p id="aResumo"></p>
     <div class="album" id="aGrade"></div>
     <div class="botoes"><button id="aFechar" class="bt-grande">Voltar</button></div>
+  </div>
+</div>
+
+<div id="mapa" class="tela" hidden>
+  <div class="cartao">
+    <h2>Escolha a pista</h2>
+    <p id="mResumo"></p>
+    <div class="album mapa" id="mGrade"></div>
+    <div class="botoes"><button id="mFechar" class="bt-grande">Voltar</button></div>
   </div>
 </div>
 

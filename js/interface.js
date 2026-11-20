@@ -56,10 +56,11 @@ function mostrarResultado(){
   corrida.mostrou=true;modo='fim';Musica.parar();$('#dica').hidden=true;redimensionar();
   const pos=corrida.jogador.posFinal,premio=PREMIO[pos-1]||0,passou=pos<=3,pegas=corrida.pegas,total=premio+pegas;
   const nv=corrida.nivel;save.trofeus[nv]=Math.min(save.trofeus[nv]||99,pos);
-  save.moedas+=total;if(passou)save.nivel++;salvar();
+  // passou: libera a próxima (se esta era a última liberada) e já deixa a próxima escolhida
+  save.moedas+=total;if(passou){if(nv>=save.nivel)save.nivel=nv+1;save.pista=nv+1;}salvar();
   const md=$('#rMedalha');md.textContent=['🏆','🥈','🥉'][pos-1]||'🚗';md.classList.toggle('gira',passou);
   $('#rTitulo').textContent=pos+'º lugar!';
-  $('#rTexto').textContent=passou?(pos===1?'Você é o campeão! ':'Muito bem! ')+'Vamos para a pista '+save.nivel+'!'
+  $('#rTexto').textContent=passou?(pos===1?'Você é o campeão! ':'Muito bem! ')+'Vamos para a pista '+save.pista+'!'
     :'Precisa chegar entre os 3 primeiros. Compre melhorias na garagem e tente de novo!';
   $('#rDetalhe').textContent=pegas?`prêmio ${premio} + moedas da pista ${pegas}`:'';
   $('#rCorrer').textContent=passou?'Próxima ▶':'De novo ▶';
@@ -84,7 +85,7 @@ function aviso(txt,cls){const el=$('#aviso');el.textContent=txt;el.className='';
 /* ================= UI da garagem ================= */
 function chip(txt,ligado){return(b)=>{b.textContent=txt;b.setAttribute('aria-pressed',String(ligado));};}
 function renderGaragem(){
-  $('#gMoedas').textContent=save.moedas;$('#gNivel').textContent=save.nivel;$('#gTema').textContent=temaDoNivel(save.nivel).ico+' '+temaDoNivel(save.nivel).nome;
+  $('#gMoedas').textContent=save.moedas;const pa=pistaAtual();$('#gNivel').textContent=pa;$('#gTema').textContent=temaDoNivel(pa).ico+' '+temaDoNivel(pa).nome;
   const mo=MODELOS[save.modelo],pe=PERSONAGENS[save.modelo];$('#gNomeCarro').innerHTML='';$('#gNomeCarro').append(pe.nome+' nº '+pe.num);
   const sm=document.createElement('small');sm.textContent=mo.sub;$('#gNomeCarro').append(sm);
   const ms=$('#gModelos');
@@ -127,6 +128,25 @@ function abrirAlbum(){
   $('#aResumo').textContent=ouros?`Você venceu ${ouros} pista${ouros>1?'s':''}! 🏆`:'Ganhe corridas para encher o álbum!';
   $('#album').hidden=false;
 }
+/* mapa: escolher qualquer pista já liberada */
+function abrirMapa(){
+  const grade=$('#mGrade');grade.innerHTML='';const ult=Math.max(TEMAS.length,save.nivel),pa=pistaAtual();
+  for(let n=1;n<=ult;n++){const pos=save.trofeus[n],t=temaDoNivel(n),livre=n<=save.nivel,b=document.createElement('button');
+    b.className='selo'+(pos===1?' ouro':'')+(n===pa?' atual':'');b.disabled=!livre;b.dataset.n=n;
+    const a=document.createElement('span');a.className='t';a.textContent=livre?t.ico:'🔒';
+    const m=document.createElement('span');m.className='m';m.textContent=pos?(['🏆','🥈','🥉'][pos-1]||'🚗'):livre?'⭐':'';
+    const c=document.createElement('small');c.textContent='Pista '+n;
+    const nm=document.createElement('span');nm.className='nome';nm.textContent=livre?t.nome:'';
+    b.append(a,m,c,nm);grade.appendChild(b);}
+  $('#mResumo').textContent=`Você já liberou ${Math.min(save.nivel,ult)} de ${ult} pistas.`;
+  $('#mapa').hidden=false;
+  const atual=grade.querySelector('.atual');if(atual)atual.scrollIntoView({block:'nearest'});
+}
+$('#mGrade').addEventListener('click',e=>{const b=e.target.closest('button.selo');if(!b||b.disabled)return;
+  const n=+b.dataset.n;save.pista=n;salvar();$('#mapa').hidden=true;renderGaragem();Som.iniciar();
+  Voz.falar('Pista '+n+': '+temaDoNivel(n).nome,{urgente:true});});
+$('#gPista').addEventListener('click',abrirMapa);
+$('#mFechar').addEventListener('click',()=>{$('#mapa').hidden=true;});
 let tNome=0;
 $('#gNome').addEventListener('input',e=>{const v=e.target.value.replace(/[^\p{L}\p{N} ]/gu,'').slice(0,10);if(v!==e.target.value)e.target.value=v;
   save.nome=v.trim();salvar();clearTimeout(tNome);tNome=setTimeout(trocarCarroGaragem,350);});

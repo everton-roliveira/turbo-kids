@@ -99,7 +99,7 @@ function telaCheia(){
 
 function iniciarCorrida(){
   Som.iniciar();prepararTexturas();descartarCorrida();telaCheia();Musica.parar();
-  const nivel=save.nivel,p=paramsNivel(nivel);P=construirPista(nivel);
+  const nivel=pistaAtual(),p=paramsNivel(nivel);P=construirPista(nivel);
   const tema=temaDoNivel(nivel);
   const cena=new THREE.Scene();cena.background=lin(tema.ceu);cena.fog=new THREE.Fog(lin(tema.nevoa),160,720);
   cena.environment=criarAmbiente(tema.ceuTopo,tema.nevoa,tema.chao,tema.noite?[{p:[10,25,10],s:[4,4,4],i:1.5}]:[{p:[20,30,15],s:[5,5,5],i:14}]);

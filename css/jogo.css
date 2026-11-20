@@ -33,6 +33,8 @@ h1 span{display:block;color:var(--vermelho);font-style:italic;transform:skewX(-6
 .g-pista{display:flex;align-items:baseline;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .g-pista b{font-size:1.7rem;font-weight:800;line-height:1}
 .g-pista small{color:var(--suave);font-size:.95rem}
+button.g-pista{width:100%;text-align:left;background:var(--painel-2);border:2px solid var(--linha);border-radius:16px;padding:10px 12px 8px}
+.g-trocar{margin-left:auto;color:var(--ouro);font-weight:800;font-size:1rem}
 h2{margin:0 0 6px;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--suave);font-weight:700}
 .modelos{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
 .modelo{background:var(--painel-2);border:2px solid var(--linha);border-radius:12px;padding:7px 10px 5px;text-align:left;display:flex;gap:8px;align-items:center}
@@ -166,5 +168,9 @@ body.inclinar #bEsq,body.inclinar #bDir{display:none}
 .selo small{color:var(--suave);font-size:.8rem;font-weight:700}
 .selo.vazio{opacity:.45}
 .selo.ouro{border-color:var(--ouro);background:#332d1c}
+.mapa .selo{font:inherit;color:inherit;cursor:pointer}
+.mapa .selo .nome{font-size:.72rem;color:var(--suave);text-align:center;line-height:1.1;min-height:2.2em}
+.mapa .selo.atual{border-color:var(--ouro);box-shadow:0 0 0 3px var(--ouro)}
+.mapa .selo:disabled{opacity:.4;cursor:default}
 @media (prefers-reduced-motion:reduce){.turbo.pronto{animation:none;box-shadow:0 0 14px 4px rgba(255,194,26,.6)}#aviso.mostra{animation-duration:1.8s}
   #dica span,.medalha.gira,.hud-moedas.pega{animation:none}}
