@@ -47,7 +47,7 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 - Álbum de troféus com a melhor posição em cada pista.
 
 ## Cenários
-25 pistas, cada uma com o seu cenário:
+30 pistas, cada uma com o seu cenário:
 
 1. Campo Verde
 2. Praia
@@ -74,15 +74,20 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 23. Jardim das Joaninhas: flores gigantes, joaninhas e abelhas voando
 24. Vila do Natal: árvores de Natal com bolinhas, presentes e casinhas com neve
 25. Estação de Trem: trens coloridos nos trilhos, estações e caixas d'água
+26. Montanha de Fogo: vulcões soltando fumaça, poças de lava e cristais
+27. Estádio de Futebol: traves, bolas gigantes quicando, bandeirinhas e arquibancadas
+28. Planeta Alienígena: cristais coloridos, plantas que balançam, alienzinhos de um olho e planeta com anel no céu
+29. Festa dos Lanches: hambúrgueres gigantes, batatas fritas, sorvetes e rosquinhas
+30. Aeroporto: aviões que decolam, torres de controle, hangares e birutas
 
 Os cenários se mexem: peixes e abelhas nadam e voam em círculo, balões sobem e descem, a roda-gigante gira, foguetes decolam na Lua, guindastes viram, navios balançam, pinguins rebolam e bolas quicam.
 
-A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois da pista 25 os cenários se repetem com traçados novos.
+A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois da pista 30 os cenários se repetem com traçados novos.
 
 ## Para crianças pequenas
 - Uma voz fala em português: contagem, "turbo pronto", posição e resultado (dá para desligar).
 - A primeira corrida mostra uma mãozinha apontando cada botão.
-- Dificuldade pensada para crianças: sobe um pouco a cada pista, distribuída da pista 1 até a 25 (adversários mais rápidos, mais buracos e placas, curvas mais fechadas). Depois da 25 fica igual à última.
+- Dificuldade pensada para crianças: sobe um pouco a cada pista, distribuída da pista 1 até a 30 (adversários mais rápidos, mais buracos e placas, curvas mais fechadas). Depois da 30 fica igual à última.
 - Desvio no turbo (liga e desliga na garagem, começa desligado): durante o turbo, do botão ou da faixa azul, se a criança não estiver virando, o carro desvia sozinho das placas. Fora do turbo, quem vira é a criança.
 - Os adversários não tentam bater nos primeiros 8 segundos, e até a pista 4 a batida deles só empurra.
 - Quem está muito na frente diminui um pouco a velocidade.

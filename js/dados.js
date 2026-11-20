@@ -130,6 +130,11 @@ const TEMAS=[
   {nome:'Jardim das Joaninhas',musica:'jardim',ico:'🐞',ceu:0xbfe8ff,ceuTopo:0x5aa8e8,nevoa:0xe4f6e0,chao:0x6fbf4a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'joaninha'},
   {nome:'Vila do Natal',musica:'natal',ico:'🎄',ceu:0xc8dcf0,ceuTopo:0x6f8fc0,nevoa:0xeef4fa,chao:0xf4f8fc,arvore:0x1f6e35,tronco:0x6b4a2b,luz:0.92,veg:'natal'},
   {nome:'Estação de Trem',musica:'trem',ico:'🚂',ceu:0xa9d8ff,ceuTopo:0x4a8fe0,nevoa:0xdcefff,chao:0x7cbf4a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'trem'},
+  {nome:'Montanha de Fogo',musica:'fogo',ico:'🌋',ceu:0x6a3424,ceuTopo:0x1a0a08,nevoa:0x7a3a26,chao:0x2b2522,arvore:0x3a3030,tronco:0x2a2020,luz:0.85,veg:'vulcao'},
+  {nome:'Estádio de Futebol',musica:'torcida',ico:'⚽',ceu:0x8fd0ff,ceuTopo:0x2f80e0,nevoa:0xd8eeff,chao:0x3f9a3a,arvore:0x2f7d32,tronco:0x6b4a2b,luz:1.0,veg:'futebol'},
+  {nome:'Planeta Alienígena',musica:'alien',ico:'👽',ceu:0x3a1060,ceuTopo:0x12052a,nevoa:0x4a1a70,chao:0x8a4fb0,arvore:0x5affe0,tronco:0x3a2a6a,luz:0.85,veg:'alien'},
+  {nome:'Festa dos Lanches',musica:'lanche',ico:'🍔',ceu:0xffe6b0,ceuTopo:0xff9a5a,nevoa:0xfff0d0,chao:0x9fd46a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'lanche'},
+  {nome:'Aeroporto',musica:'aviao',ico:'✈️',ceu:0xa8d8ff,ceuTopo:0x4a90e0,nevoa:0xe0f0ff,chao:0x8fb86a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'aeroporto'},
 ];
 const temaDoNivel=n=>TEMAS[(n-1)%TEMAS.length];
 // pista escolhida no mapa (só as já liberadas; sem escolha = a última liberada)
@@ -141,10 +146,10 @@ const BUZINAS={rosso:[440,554],touro:[330,415],flecha:[523,659],gt:[392,494],v8:
 // 0 na pista 1 e 1 na última: a dificuldade sobe aos poucos por todas as pistas
 const progresso=n=>clamp((n-1)/(TEMAS.length-1),0,1);
 function paramsNivel(n){const t=progresso(n);return{
-  aiVmax:47+21*t,
-  iaAcel:13.8+8.2*t,
-  buracos:Math.round(4+10*t),
-  bloqueios:Math.round(2+7*t),
+  aiVmax:49+24*t,
+  iaAcel:13.8+9.2*t,
+  buracos:Math.round(4+11*t),
+  bloqueios:Math.round(2+8*t),
   drift:0.08+0.2*t,
   agressao:0.11+0.25*t,
   desvio:0.56+0.39*t,

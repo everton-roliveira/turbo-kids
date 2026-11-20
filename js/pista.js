@@ -112,7 +112,7 @@ function montarCenario(cena,tema,extras){
       im.setColorAt(n,cor.copy(cores[n%cores.length]));});
     if(im.instanceColor)im.instanceColor.needsUpdate=true;
   }else if(tema.veg==='palmeira'){palmeiras(160);
-  }else if(['doce','dino','lua','fazenda','castelo','pirata','cogumelo','polo','obra','parque','fundo','safari','futuro','cerejeira','brinquedo','nuvem','joaninha','natal','trem'].includes(tema.veg)){
+  }else if(['doce','dino','lua','fazenda','castelo','pirata','cogumelo','polo','obra','parque','fundo','safari','futuro','cerejeira','brinquedo','nuvem','joaninha','natal','trem','vulcao','futebol','alien','lanche','aeroporto'].includes(tema.veg)){
     decorarTema(cena,tema,{plantar,instancia,dm,rnd,palmeiras,animados,centro:[(minX+maxX)/2,(minZ+maxZ)/2]});
   }else if(tema.veg==='cacto'){
     const g=mesclar([new THREE.CylinderGeometry(0.5,0.55,5,8).translate(0,2.5,0),new THREE.SphereGeometry(0.5,8,6).translate(0,5,0),

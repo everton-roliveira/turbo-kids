@@ -67,6 +67,11 @@ const ESTILOS={
   sonho:{bpm:88,acordes:['Fmaj7','Em7','Dm7','Cmaj7'],baixo:'R.......',arp:'0123.321',arpTipo:'sine',arpVol:0.04,arpDur:2,mel:'3.......2.......',melTipo:'sine',melDur:5},
   jardim:{bpm:128,acordes:['G','Em','C','D'],baixo:'R.F.R.F.',arp:'.1.2.1.2',arpTipo:'triangle',arpVol:0.035,mel:'2.3.4.3.2...1...',melTipo:'sine',chimbal:'.x.x.x.x',caixa:'....x...'},
   natal:{bpm:136,acordes:['G','C','D7','G'],baixo:'R.F.R.F.',arp:'0.1.2.1.',arpTipo:'sine',arpVol:0.04,mel:'2.2.2...2.2.2...',melTipo:'sine',sino:'xxxxxxxx',bumbo:'x...x...'},
+  fogo:{bpm:132,acordes:['Em','C','D','B7'],baixo:'RRRRRRRR',baixoTipo:'sawtooth',arp:'0.0.2.0.',arpTipo:'square',arpVol:0.02,mel:'2.1.0...2.3.4...',melTipo:'sawtooth',melVol:0.02,bumbo:'x.x.x.x.',tom:'...x...x',caixa:'..x...x.'},
+  torcida:{bpm:128,acordes:['C','F','G','C'],baixo:'R.R.F.R.',arp:'0.2.0.2.',arpTipo:'square',arpVol:0.02,mel:'0.0.2.0.4...2...',melTipo:'square',melVol:0.03,bumbo:'x..x..x.',caixa:'x.x.x.x.',caixaVol:0.05,tom:'....x.x.'},
+  alien:{bpm:100,acordes:['Cm','Ab','Fm','G'],baixo:'L.......',arp:'0213.312',arpTipo:'sine',arpVol:0.045,arpDur:1.2,mel:'5...3...4...2...',melTipo:'sine',melDur:3,chimbal:'..x...x.',chimbalVol:0.02},
+  lanche:{bpm:144,acordes:['F','D7','G7','C7'],baixo:'R.F.R.F.',arp:'.1.2.1.2',arpTipo:'triangle',arpVol:0.035,mel:'2.1.2.3.4...2...',melTipo:'square',melVol:0.025,bumbo:'x...x...',caixa:'..x...x.'},
+  aviao:{bpm:120,acordes:['D','G','A','D'],baixo:'R...F...',arp:'01210121',arpTipo:'triangle',arpVol:0.035,mel:'0...2...4.3.2...',melTipo:'triangle',melDur:2.5,bumbo:'x...x...',chimbal:'.x.x.x.x',sino:'x.......'},
   trem:{bpm:156,acordes:['A','D','E','A'],baixo:'R.F.R.F.',arp:'.2.2.2.2',arpTipo:'triangle',arpVol:0.03,mel:'0.2.4...3.1.2...',melTipo:'square',melVol:0.025,caixa:'x.x.x.x.',caixaVol:0.03,bumbo:'x...x...'},
 };
 const NOTAS={C:0,'C#':1,Db:1,D:2,Eb:3,E:4,F:5,'F#':6,Gb:6,G:7,Ab:8,A:9,Bb:10,B:11};

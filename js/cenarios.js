@@ -326,6 +326,93 @@ function decorarTema(cena,tema,o){
       [mesclar([[-1.3,-1.3],[1.3,-1.3],[-1.3,1.3],[1.3,1.3]].map(([x,z])=>B(0.3,6.5,0.3,x,3.25,z))),mat(0x4a3018)]],6,4,[1,1.2]);
     grupo([[B(12,4,5,0,2,0),mat(0xf0e2c4)],[mesclar([B(13.4,0.5,6.8,0,4.3,0),B(1.4,1.4,0.2,0,3.2,2.55)]),mat(0x8a2f24)],[new THREE.CylinderGeometry(0.55,0.55,0.1,16).rotateX(Math.PI/2).translate(0,3.2,2.7),mat(0xffffff)]],4,9,[1,1.2]);
     arvoresRedondas(80,[0x3a8a34,0x4fa63f]);
+  }else if(tema.veg==='vulcao'){
+    // vulcões soltando fumaça
+    grupo([[new THREE.CylinderGeometry(5,26,22,14).translate(0,11,0),mat(0x3a2622)],
+      [new THREE.CylinderGeometry(4.6,4.6,0.6,14).translate(0,22,0),brilho(0xff5a1f)],
+      [mesclar([new THREE.SphereGeometry(3,10,8).translate(0,25,0),new THREE.SphereGeometry(3.6,10,8).translate(1.5,29,0.5),new THREE.SphereGeometry(4,10,8).translate(-1,33,-0.5)]),
+        mat(0x8a8a8a,{transparent:true,opacity:0.75})]],8,30,[0.9,1.3],null,{pecas:[2],f:(t,b)=>({dy:(t*1.5+b.fase*3)%8})});
+    // poças de lava
+    grupo([[new THREE.CircleGeometry(1,20).rotateX(-Math.PI/2).translate(0,0.03,0),brilho(0xff6a1f)],
+      [new THREE.TorusGeometry(1,0.18,6,20).rotateX(Math.PI/2).scale(1,0.6,1).translate(0,0.05,0),mat(0x2a1e1a)]],45,9,[3,8]);
+    // pedras de lava
+    grupo([[new THREE.DodecahedronGeometry(1.3,0).scale(1.2,0.8,1).translate(0,0.5,0),mat(0x2e2725)]],100,2.5,[0.6,2.2]);
+    grupo([[new THREE.OctahedronGeometry(0.6,0).scale(0.6,1.4,0.6).translate(0,0.8,0),brilho(0xffa020)]],60,1.2,[0.7,1.6],null,{f:(t,b)=>({yaw:t*0.6+b.fase})});
+  }else if(tema.veg==='futebol'){
+    if(!TEX.bola)TEX.bola=tex(128,64,(x,w,h)=>{x.fillStyle='#fafafa';x.fillRect(0,0,w,h);x.fillStyle='#151515';
+      for(let j=0;j<3;j++)for(let i=0;i<6;i++){const cx=(i+(j%2)*0.5)*w/6,cy=(j+0.5)*h/3;x.beginPath();for(let k=0;k<5;k++){const a=k*Math.PI*2/5;x.lineTo(cx+Math.cos(a)*7,cy+Math.sin(a)*7);}x.fill();}});
+    // traves com rede
+    grupo([[mesclar([new THREE.CylinderGeometry(0.12,0.12,2.4,8).translate(-3.6,1.2,0),new THREE.CylinderGeometry(0.12,0.12,2.4,8).translate(3.6,1.2,0),
+        new THREE.CylinderGeometry(0.12,0.12,7.4,8).rotateZ(Math.PI/2).translate(0,2.4,0)]),mat(0xffffff)],
+      [mesclar([B(7.2,2.3,0.05,0,1.15,-1.5),B(7.2,0.05,1.5,0,2.3,-0.75),B(0.05,2.3,1.5,-3.6,1.15,-0.75),B(0.05,2.3,1.5,3.6,1.15,-0.75)]),mat(0xffffff,{transparent:true,opacity:0.35})]],12,6,[1,1.2]);
+    // bolas gigantes quicando
+    grupo([[new THREE.SphereGeometry(1.5,20,14).translate(0,1.5,0),new THREE.MeshStandardMaterial({map:TEX.bola,roughness:0.4})]],40,4,[1,2.4],null,
+      {f:(t,b)=>({dy:Math.abs(Math.sin(t*2+b.fase))*3,yaw:t+b.fase})});
+    // bandeirinhas
+    grupo([[new THREE.CylinderGeometry(0.06,0.06,3,6).translate(0,1.5,0),mat(0xf2f2f2)],[new THREE.BoxGeometry(0.05,0.8,1.1).translate(0,2.55,0.55),mat(0xffffff)]],
+      70,1.2,[0.9,1.3],[null,[0xe8202a,0xffd21f,0x2f8fff,0x3fbf3f]],{pecas:[1],f:(t,b)=>({yaw:Math.sin(t*3+b.fase)*0.4})});
+    // arquibancadas com torcida
+    if(!TEX.torcidaLonga){TEX.torcidaLonga=TEX.torcida.clone();TEX.torcidaLonga.wrapS=TEX.torcidaLonga.wrapT=THREE.RepeatWrapping;TEX.torcidaLonga.repeat.set(1,5);TEX.torcidaLonga.needsUpdate=true;}
+    grupo([[mesclar([B(2,1.4,16,2,0.7,0),B(2,3,16,0,1.5,0),B(2,4.6,16,-2,2.3,0)]),new THREE.MeshLambertMaterial({map:TEX.torcidaLonga})]],8,10,[1,1.2]);
+  }else if(tema.veg==='alien'){
+    // cristais que brilham
+    grupo([[mesclar([new THREE.OctahedronGeometry(1,0).scale(0.6,2.4,0.6).translate(0,2,0),new THREE.OctahedronGeometry(1,0).scale(0.45,1.6,0.45).rotateZ(0.5).translate(1,1.2,0.3),
+      new THREE.OctahedronGeometry(1,0).scale(0.4,1.4,0.4).rotateZ(-0.6).translate(-0.9,1,-0.2)]),new THREE.MeshBasicMaterial({color:0xffffff})]],90,3,[0.7,2],[[0x5affe0,0xff6af0,0xb4ff4a,0x7a8aff]]);
+    // plantas de bolinha que balançam
+    grupo([[new THREE.CylinderGeometry(0.1,0.16,3,6).translate(0,1.5,0),mat(0x3a2a6a)],[new THREE.SphereGeometry(0.5,10,8).translate(0,3.2,0),new THREE.MeshBasicMaterial({color:0xffffff})]],
+      140,1.2,[0.8,1.8],[null,[0xffe14d,0x5affe0,0xff6af0]],{f:(t,b)=>({roll:Math.sin(t*1.4+b.fase)*0.18})});
+    // alienzinhos de um olho
+    grupo([[mesclar([new THREE.SphereGeometry(0.7,12,10).scale(1,1.2,1).translate(0,0.9,0),new THREE.SphereGeometry(0.75,14,10).translate(0,2.2,0),
+        new THREE.CylinderGeometry(0.04,0.04,0.7,5).rotateZ(0.4).translate(-0.4,3.1,0),new THREE.CylinderGeometry(0.04,0.04,0.7,5).rotateZ(-0.4).translate(0.4,3.1,0),
+        new THREE.SphereGeometry(0.12,6,5).translate(-0.55,3.45,0),new THREE.SphereGeometry(0.12,6,5).translate(0.55,3.45,0)]),mat(0x6fdc4a)],
+      [new THREE.SphereGeometry(0.36,12,10).scale(1,1,0.6).translate(0,2.3,0.58),mat(0xffffff)],[new THREE.SphereGeometry(0.17,8,6).translate(0,2.3,0.8),mat(0x111111)]],
+      30,1.5,[1.2,1.8],null,{f:(t,b)=>({dy:Math.abs(Math.sin(t*2.5+b.fase))*0.8,yaw:Math.sin(t*0.6+b.fase)*0.8})});
+    // céu: estrelas, planeta com anel e duas luas
+    const pos=[];for(let i=0;i<1100;i++){const t=rnd()*Math.PI*2,y=rnd()*0.95+0.03,r=Math.sqrt(1-y*y);pos.push(cx+Math.cos(t)*r*1000,y*1000-40,cz+Math.sin(t)*r*1000);}
+    const ge=new THREE.BufferGeometry();ge.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+    cena.add(new THREE.Points(ge,new THREE.PointsMaterial({color:0xffffff,size:2,sizeAttenuation:false,fog:false})));
+    const planeta=new THREE.Group();planeta.position.set(cx-220,190,cz-520);
+    planeta.add(new THREE.Mesh(new THREE.SphereGeometry(60,32,20),new THREE.MeshBasicMaterial({color:lin(0xff9a5a),fog:false})));
+    const anel=new THREE.Mesh(new THREE.RingGeometry(80,115,48),new THREE.MeshBasicMaterial({color:lin(0xffd9a0),side:THREE.DoubleSide,fog:false,transparent:true,opacity:0.8}));
+    anel.rotation.x=Math.PI/2.4;planeta.add(anel);cena.add(planeta);
+    for(const [x,y,z,r,c] of [[260,230,-420,18,0xd9e6ff],[340,150,-300,10,0xb4ff9a]]){const l=new THREE.Mesh(new THREE.SphereGeometry(r,20,14),new THREE.MeshBasicMaterial({color:lin(c),fog:false}));l.position.set(cx+x,y,cz+z);cena.add(l);}
+    o.animados.push({custom:t=>{planeta.rotation.y=t*0.04;}});
+  }else if(tema.veg==='lanche'){
+    // hambúrgueres gigantes girando
+    grupo([[mesclar([new THREE.CylinderGeometry(1.5,1.4,0.5,20).translate(0,0.25,0),new THREE.SphereGeometry(1.55,20,10,0,Math.PI*2,0,Math.PI/2).scale(1,0.7,1).translate(0,1.25,0)]),mat(0xe0a050)],
+      [new THREE.CylinderGeometry(1.6,1.6,0.35,20).translate(0,0.68,0),mat(0x6b3a1f)],
+      [B(2.6,0.1,2.6,0,0.9,0),mat(0xffd23f)],[new THREE.CylinderGeometry(1.7,1.7,0.1,14).translate(0,1.0,0),mat(0x5fbf3f)]],
+      22,4,[1.6,2.6],null,{f:(t,b)=>({yaw:t*0.5+b.fase})});
+    // batatas fritas
+    const palitos=[];for(let i=0;i<9;i++)palitos.push(B(0.18,2,0.18,-0.5+(i%3)*0.5,1.9+(i%2)*0.3,-0.35+Math.floor(i/3)*0.35).rotateZ((i%3-1)*0.12));
+    grupo([[new THREE.CylinderGeometry(1.1,0.8,2,4).rotateY(Math.PI/4).translate(0,1,0),mat(0xe8202a)],[mesclar(palitos),mat(0xffd23f)]],28,3,[1.2,2]);
+    // sorvetes de casquinha
+    grupo([[new THREE.ConeGeometry(0.7,2.4,12).rotateX(Math.PI).translate(0,1.2,0),mat(0xd9a05a)],
+      [mesclar([new THREE.SphereGeometry(0.8,14,10).translate(0,2.6,0),new THREE.SphereGeometry(0.7,14,10).translate(0,3.6,0)]),mat(0xffffff)],
+      [new THREE.SphereGeometry(0.18,8,6).translate(0,4.35,0),mat(0xd8202a)]],45,2,[1.2,2],[null,[0xff9ad5,0xfff1d0,0x7a4a2a,0x9fe4c0]]);
+    // rosquinhas
+    grupo([[new THREE.TorusGeometry(0.9,0.42,10,20).rotateX(Math.PI/2).translate(0,0.42,0),mat(0xd9a05a)],
+      [new THREE.TorusGeometry(0.9,0.36,8,20,Math.PI*2).rotateX(Math.PI/2).scale(1,0.6,1).translate(0,0.62,0),mat(0xffffff)]],45,2.5,[1,2],[null,[0xff7ab8,0x7a4a2a,0xfff1a8]]);
+  }else if(tema.veg==='aeroporto'){
+    // aviões: ficam parados e de vez em quando decolam
+    const aviao=[new THREE.CylinderGeometry(1,1,12,16).rotateX(Math.PI/2).translate(0,3,0),new THREE.SphereGeometry(1,16,10).scale(1,1,1.6).translate(0,3,6),
+      new THREE.ConeGeometry(1,3,16).rotateX(-Math.PI/2).translate(0,3.2,-7.4),B(15,0.25,2.4,0,2.6,0.6),B(5.4,0.2,1.4,0,3.4,-7.2)];
+    grupo([[mesclar(aviao),mat(0xf4f6f8)],
+      [mesclar([new THREE.BoxGeometry(0.25,3,2).translate(0,5,-7.4),new THREE.CylinderGeometry(0.5,0.5,2,12).rotateX(Math.PI/2).translate(-3.6,2.1,0.8),new THREE.CylinderGeometry(0.5,0.5,2,12).rotateX(Math.PI/2).translate(3.6,2.1,0.8)]),mat(0xffffff)],
+      [mesclar([B(2.04,0.35,9,0,3.4,0.5),new THREE.SphereGeometry(0.55,10,6).scale(1.6,0.5,1).translate(0,3.55,6.6)]),brilho(0x2a4a7a)],
+      [mesclar([new THREE.CylinderGeometry(0.12,0.12,2,6).translate(0,1,4.5),new THREE.CylinderGeometry(0.12,0.12,2,6).translate(-2,1,0),new THREE.CylinderGeometry(0.12,0.12,2,6).translate(2,1,0)]),mat(0x26272b)]],
+      16,16,[1,1.2],[null,[0xe8202a,0x2f8fff,0xffc21f,0x3fbf3f]],
+      {f:(t,b)=>{const c=(t+b.fase*5)%34;if(c<20)return{};const d=(c-20)*(c-20)*0.9,s=Math.sin(b.ry),k=Math.cos(b.ry),sobe=Math.max(0,c-24);
+        return{dx:s*d,dz:k*d,dy:sobe*sobe*0.7,pitch:-Math.min(0.3,sobe*0.08)};}});
+    // torres de controle
+    grupo([[mesclar([new THREE.CylinderGeometry(1.4,2,18,12).translate(0,9,0),new THREE.CylinderGeometry(3.4,3,0.6,12).translate(0,21.6,0),new THREE.ConeGeometry(3.6,1.6,12).translate(0,23.6,0)]),mat(0xe6e8ec)],
+      [new THREE.CylinderGeometry(3.2,3,3,12).translate(0,19.6,0),brilho(0x8fd8ff)]],4,8,[1,1.2]);
+    // hangares
+    grupo([[new THREE.CylinderGeometry(7,7,16,16,1,false,0,Math.PI).rotateZ(Math.PI/2).rotateY(Math.PI/2).translate(0,0,0),mat(0xaab0b8,{side:THREE.DoubleSide})]],6,12,[1,1.2]);
+    // birutas
+    grupo([[new THREE.CylinderGeometry(0.07,0.07,4,6).translate(0,2,0),mat(0xdddddd)],[new THREE.ConeGeometry(0.45,2,10,1,true).rotateZ(Math.PI/2).translate(1.1,3.7,0),mat(0xff7a1f,{side:THREE.DoubleSide})]],
+      24,1.5,[1,1.3],null,{pecas:[1],f:(t,b)=>({yaw:Math.sin(t*0.8+b.fase)*0.5})});
+    arvoresRedondas(70,[0x3a8a34,0x4fa63f]);
   }
 }
 
