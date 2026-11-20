@@ -37,7 +37,7 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 - Álbum de troféus com a melhor posição em cada pista.
 
 ## Cenários
-11 pistas, cada uma com o seu cenário:
+16 pistas, cada uma com o seu cenário:
 
 1. Campo Verde
 2. Praia
@@ -50,8 +50,13 @@ Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a c�
 9. Lua: céu estrelado, a Terra no céu, crateras e foguetes. O pulo na rampa é mais alto
 10. Fazenda: celeiros, vaquinhas, girassóis e fardos de feno
 11. Reino Encantado: castelos coloridos, arco-íris e árvores cor-de-rosa
+12. Ilha dos Piratas: navios piratas, baús de tesouro, barris e o mar
+13. Floresta dos Cogumelos: cogumelos gigantes com bolinhas e florzinhas
+14. Polo Sul: pinguins, iglus, bonecos de neve e blocos de gelo
+15. Canteiro de Obras: guindastes, caminhões, montes de terra e cones
+16. Parque de Diversões: rodas-gigantes, tendas de circo e balões
 
-A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois da pista 11 os cenários se repetem com traçados novos.
+A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois da pista 16 os cenários se repetem com traçados novos.
 
 ## Para crianças pequenas
 - Uma voz fala em português: contagem, "turbo pronto", posição e resultado (dá para desligar).

@@ -219,7 +219,7 @@ body.inclinar #bEsq,body.inclinar #bDir{display:none}
     <p class="como">🛟 Desvio no turbo: quando ligado, o carro desvia sozinho das placas só enquanto estiver no turbo (do botão ou da faixa azul). Fora do turbo, quem vira é você.</p>
     <p class="como" id="gDicaInstalar" hidden></p>
     <button id="gZerar" class="link">Recomeçar do zero</button>
-    <small class="versao">Turbo Kids · versão 11</small>
+    <small class="versao">Turbo Kids · versão 12</small>
   </div>
 </div>
 
@@ -367,6 +367,11 @@ const TEMAS=[
   {nome:'Lua',ico:'🌕',ceu:0x05060f,ceuTopo:0x000000,nevoa:0x0b0d1c,chao:0x8c8c94,arvore:0x777780,tronco:0x555560,luz:0.95,veg:'lua',gravidade:0.55},
   {nome:'Fazenda',ico:'🚜',ceu:0x9fd6ff,ceuTopo:0x3d8ae0,nevoa:0xdff0ff,chao:0x7cbf4a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'fazenda'},
   {nome:'Reino Encantado',ico:'🏰',ceu:0xd9c8ff,ceuTopo:0x7a6ae0,nevoa:0xece4ff,chao:0x8fd47a,arvore:0xff9ad5,tronco:0x7a5236,luz:1.0,veg:'castelo'},
+  {nome:'Ilha dos Piratas',ico:'🏴‍☠️',ceu:0x8fd8ff,ceuTopo:0x2a86d9,nevoa:0xd5f0ff,chao:0xe8d39a,arvore:0x2e8b3a,tronco:0x8a6a3e,luz:1.08,veg:'pirata',mar:true},
+  {nome:'Floresta dos Cogumelos',ico:'🍄',ceu:0xc9f0d8,ceuTopo:0x5fb08a,nevoa:0xe2f7e8,chao:0x5aa84a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'cogumelo'},
+  {nome:'Polo Sul',ico:'🐧',ceu:0xbfe2ff,ceuTopo:0x5a9de0,nevoa:0xeef7ff,chao:0xf4f8fc,arvore:0x1f5e3a,tronco:0x5a4030,luz:0.92,veg:'polo'},
+  {nome:'Canteiro de Obras',ico:'🏗️',ceu:0xb9dcf5,ceuTopo:0x4f8fd0,nevoa:0xe4eef5,chao:0xb08a5a,arvore:0x2f7d32,tronco:0x6b4a2b,luz:1.0,veg:'obra'},
+  {nome:'Parque de Diversões',ico:'🎡',ceu:0xffe0b8,ceuTopo:0x6a7fe0,nevoa:0xffe9d1,chao:0x7cc45a,arvore:0x3a8a34,tronco:0x6b4a2b,luz:1.0,veg:'parque'},
 ];
 const temaDoNivel=n=>TEMAS[(n-1)%TEMAS.length];
 const ADESIVOS=[['nenhum','Nenhum'],['raio','⚡ Raio'],['chamas','🔥 Chamas'],['estrelas','⭐ Estrelas'],['listras','🏁 Listras']];
@@ -991,7 +996,7 @@ function montarCenario(cena,tema,extras){
       im.setColorAt(n,cor.copy(cores[n%cores.length]));});
     if(im.instanceColor)im.instanceColor.needsUpdate=true;
   }else if(tema.veg==='palmeira'){palmeiras(160);
-  }else if(tema.veg==='doce'||tema.veg==='dino'||tema.veg==='lua'||tema.veg==='fazenda'||tema.veg==='castelo'){
+  }else if(['doce','dino','lua','fazenda','castelo','pirata','cogumelo','polo','obra','parque'].includes(tema.veg)){
     decorarTema(cena,tema,{plantar,instancia,dm,rnd,palmeiras,centro:[(minX+maxX)/2,(minZ+maxZ)/2]});
   }else if(tema.veg==='cacto'){
     const g=mesclar([new THREE.CylinderGeometry(0.5,0.55,5,8).translate(0,2.5,0),new THREE.SphereGeometry(0.5,8,6).translate(0,5,0),
@@ -1110,6 +1115,73 @@ function decorarTema(cena,tema,o){
       [mesclar([1,-1].flatMap(l=>[new THREE.SphereGeometry(2.8,10,8).translate(l*15.2,1.2,0),new THREE.SphereGeometry(2.4,10,8).translate(l*18.4,1,0.6),new THREE.SphereGeometry(2.2,10,8).translate(l*12.6,1,-0.4)])),mat(0xffffff)]],
       6,26,[1,1.2]);
     arvoresRedondas(120,[0xff9ad5,0xd7a6ff,0xffc2e2]);
+  }else if(tema.veg==='pirata'){
+    palmeiras(110);
+    // navios piratas encalhados na areia
+    const velas=[[0,6.2,-2.6,4.6,3.2],[0,9,-2.6,3.6,2.4],[0,6.8,2.2,4.2,3]].map(([x,y,z,w,h])=>B(w,h,0.15,x,y,z));
+    grupo([[mesclar([B(4.4,2.4,11,0,1.6,0),new THREE.ConeGeometry(2.2,4,4).rotateY(Math.PI/4).scale(1,1,1).rotateX(Math.PI/2).scale(1,0.55,1).translate(0,1.9,7.4),B(4.6,0.4,11.2,0,2.9,0),B(4.4,1.6,2.6,0,3.8,-4.2)]),mat(0x7a4a26)],
+      [mesclar([new THREE.CylinderGeometry(0.18,0.22,10,8).translate(0,6,-2.6),new THREE.CylinderGeometry(0.16,0.2,8,8).translate(0,5,2.2)]),mat(0x4a3018)],
+      [mesclar(velas),mat(0xf3ead2)],
+      [B(1.6,1,0.08,0.8,11.6,-2.6),mat(0x111111)]],8,10,[1,1.3]);
+    // baús de tesouro
+    grupo([[mesclar([B(1.6,1,1,0,0.5,0),new THREE.CylinderGeometry(0.5,0.5,1.6,12,1,false,0,Math.PI).rotateZ(Math.PI/2).translate(0,1,0)]),mat(0x8a5a2b)],
+      [mesclar([B(1.66,0.15,1.06,0,0.2,0),B(1.66,0.15,1.06,0,0.85,0),B(0.3,0.4,0.08,0,0.8,0.52)]),mat(0xffc93c)]],30,2,[0.9,1.4]);
+    // barris
+    grupo([[new THREE.CylinderGeometry(0.6,0.6,1.4,12).translate(0,0.7,0),mat(0x9a6a3a)]],40,1.5,[0.9,1.2]);
+  }else if(tema.veg==='cogumelo'){
+    // cogumelos gigantes com bolinhas
+    const pintas=[];for(let i=0;i<9;i++){const t=i*2.4,f=0.45+(i%3)*0.3;pintas.push(new THREE.SphereGeometry(0.42,8,6).scale(1,0.5,1).translate(3*Math.sin(f)*Math.cos(t),5+1.8*Math.cos(f),3*Math.sin(f)*Math.sin(t)));}
+    grupo([[new THREE.CylinderGeometry(0.7,1,5,12).translate(0,2.5,0),mat(0xf4ead8)],
+      [new THREE.SphereGeometry(3,18,10,0,Math.PI*2,0,Math.PI/2).scale(1,0.6,1).translate(0,5,0),mat(0xffffff)],
+      [mesclar(pintas),mat(0xffffff)]],70,4,[0.6,1.8],[null,[0xe8202a,0xff8a1f,0x9b5bd6,0x2f8fff]]);
+    // florzinhas coloridas
+    grupo([[new THREE.CylinderGeometry(0.05,0.06,1.2,5).translate(0,0.6,0),mat(0x3e8f2f)],
+      [new THREE.IcosahedronGeometry(0.35,0).translate(0,1.3,0),mat(0xffffff)]],260,1,[0.8,1.5],[null,[0xff6fb5,0xffd21f,0xffffff,0xb36bff,0xff8a2b]]);
+    arvoresRedondas(70,[0x3a8a34,0x4fa63f]);
+  }else if(tema.veg==='polo'){
+    // iglus
+    grupo([[mesclar([new THREE.SphereGeometry(3.5,18,10,0,Math.PI*2,0,Math.PI/2),B(2.4,2.2,2.4,0,1.1,3.4)]),mat(0xeaf4ff)],
+      [B(1.2,1.6,0.1,0,0.8,4.62),mat(0x2a3a55)]],12,6,[1,1.3]);
+    // pinguins
+    grupo([[mesclar([new THREE.SphereGeometry(1,12,10).scale(0.7,1.1,0.6).translate(0,1.1,0),new THREE.SphereGeometry(0.45,10,8).translate(0,2.2,0),
+        new THREE.SphereGeometry(0.25,6,5).scale(0.5,1.4,0.8).translate(-0.72,1.2,0),new THREE.SphereGeometry(0.25,6,5).scale(0.5,1.4,0.8).translate(0.72,1.2,0)]),mat(0x1b1d24)],
+      [mesclar([new THREE.SphereGeometry(1,12,10).scale(0.55,0.9,0.4).translate(0,1.0,0.25),new THREE.SphereGeometry(0.12,6,5).translate(-0.17,2.3,0.38),new THREE.SphereGeometry(0.12,6,5).translate(0.17,2.3,0.38)]),mat(0xffffff)],
+      [mesclar([new THREE.ConeGeometry(0.12,0.4,6).rotateX(Math.PI/2).translate(0,2.15,0.55),B(0.35,0.1,0.5,-0.25,0.05,0.2),B(0.35,0.1,0.5,0.25,0.05,0.2)]),mat(0xff9a1f)]],70,2.5,[1.3,2]);
+    // bonecos de neve
+    grupo([[mesclar([new THREE.SphereGeometry(1.2,12,10).translate(0,1.1,0),new THREE.SphereGeometry(0.85,12,10).translate(0,2.8,0),new THREE.SphereGeometry(0.6,12,10).translate(0,4.0,0)]),mat(0xffffff)],
+      [new THREE.ConeGeometry(0.12,0.6,6).rotateX(Math.PI/2).translate(0,4.0,0.85),mat(0xff7a1f)],
+      [mesclar([new THREE.CylinderGeometry(0.45,0.45,0.7,12).translate(0,4.75,0),new THREE.CylinderGeometry(0.7,0.7,0.06,12).translate(0,4.42,0)]),mat(0x222222)]],24,2,[0.9,1.3]);
+    // blocos de gelo
+    grupo([[new THREE.DodecahedronGeometry(1.8,0).scale(1,0.8,1.2).translate(0,0.8,0),new THREE.MeshStandardMaterial({color:lin(0xbfe8ff),roughness:0.2,metalness:0.1})]],50,3,[0.6,2]);
+  }else if(tema.veg==='obra'){
+    // guindastes
+    grupo([[mesclar([B(1.2,22,1.2,0,11,0),B(1,1,22,0,22.5,5),B(1.6,1.6,1.6,0,21.4,0)]),mat(0xffc21f)],
+      [mesclar([B(2.2,1.8,2.4,0,22.5,-5),B(0.06,8,0.06,0,18.5,13),B(0.5,0.6,0.3,0,14.4,13),B(3.4,0.6,3.4,0,0.3,0)]),mat(0x55585e)]],6,14,[0.9,1.2]);
+    // caminhões basculantes
+    const rodas=[[-1.2,1.6],[1.2,1.6],[-1.2,-0.8],[1.2,-0.8],[-1.2,-2],[1.2,-2]].map(([x,z])=>new THREE.CylinderGeometry(0.6,0.6,0.5,12).rotateZ(Math.PI/2).translate(x,0.6,z));
+    grupo([[mesclar([B(2.2,1.8,1.6,0,1.9,2.2),B(2.4,1.4,3.6,0,2.2,-1.2)]),mat(0xffb01f)],
+      [mesclar([B(2,0.4,5.4,0,1,0),...rodas]),mat(0x26272b)],
+      [B(1.9,0.7,0.06,0,2.3,3.02),brilho(0x9fd8ff)]],16,4,[1,1.2]);
+    // montes de terra, tubos de concreto e cones
+    grupo([[new THREE.ConeGeometry(4,3,10).translate(0,1.5,0),mat(0x8a6a40)]],30,5,[0.6,1.4]);
+    grupo([[new THREE.CylinderGeometry(1.2,1.2,2.6,16,1,true).rotateZ(Math.PI/2).translate(0,1.2,0),mat(0xa8a8a8,{side:THREE.DoubleSide})]],30,2,[0.9,1.1]);
+    grupo([[new THREE.ConeGeometry(0.35,1,10).translate(0,0.5,0),mat(0xff6a00)],[new THREE.CylinderGeometry(0.24,0.28,0.18,10).translate(0,0.55,0),mat(0xffffff)]],90,1,[0.9,1.3]);
+  }else if(tema.veg==='parque'){
+    if(!TEX.circo){TEX.circo=tex(64,16,(x,w,h)=>{for(let i=0;i<8;i++){x.fillStyle=i%2?'#ffffff':'#e8202a';x.fillRect(i*8,0,8,h);}},true);TEX.circo.repeat.set(2,1);}
+    // rodas-gigantes
+    const raios=[],cab=[];for(let k=0;k<10;k++){const a=k*Math.PI/5;raios.push(B(0.25,12,0.25,0,0,0).translate(0,6,0).rotateZ(a).translate(0,14,0));
+      cab.push(B(1.6,1.6,1.6,12*Math.cos(a),14+12*Math.sin(a)-1.3,0));}
+    grupo([[mesclar([new THREE.TorusGeometry(12,0.35,6,48).translate(0,14,0),...raios,B(0.5,15,0.5,0,7,0).rotateZ(0.35).translate(-2.4,0,1.5),B(0.5,15,0.5,0,7,0).rotateZ(-0.35).translate(2.4,0,1.5),
+        B(0.5,15,0.5,0,7,0).rotateZ(0.35).translate(-2.4,0,-1.5),B(0.5,15,0.5,0,7,0).rotateZ(-0.35).translate(2.4,0,-1.5)]),mat(0xf2f2f2)],
+      [mesclar(cab),mat(0xffffff)]],5,14,[0.9,1.2],[null,[0xe8202a,0x2f8fff,0xffc21f,0x3fbf3f]]);
+    // tendas de circo
+    grupo([[new THREE.CylinderGeometry(6,6,5,20).translate(0,2.5,0),new THREE.MeshLambertMaterial({map:TEX.circo})],
+      [new THREE.ConeGeometry(7,5,20).translate(0,7.5,0),new THREE.MeshLambertMaterial({map:TEX.circo})],
+      [mesclar([new THREE.CylinderGeometry(0.08,0.08,2,6).translate(0,10.8,0),B(1.2,0.7,0.06,0.6,11.4,0)]),mat(0xffc21f)]],7,8,[0.9,1.2]);
+    // balões coloridos
+    grupo([[new THREE.SphereGeometry(0.8,12,10).scale(1,1.2,1).translate(0,6.5,0),mat(0xffffff)],[B(0.03,5.6,0.03,0,2.8,0),mat(0xeeeeee)]],
+      60,1.5,[0.8,1.3],[[0xe8202a,0x2f8fff,0xffc21f,0x3fbf3f,0xff6fb5,0xb36bff]]);
+    arvoresRedondas(70,[0x3a8a34,0x4fa63f]);
   }
 }
 
