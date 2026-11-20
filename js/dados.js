@@ -66,7 +66,7 @@ Object.assign(MODELOS,{
 });
 const ORDEM_MODELOS=['rosso','touro','flecha','gt','v8','proto','patrulha','onibus','sirene','jipe'];
 // preço dos carros que não vêm liberados
-const PRECO_CARRO={patrulha:600,onibus:900,sirene:1200,jipe:1500};
+const PRECO_CARRO={patrulha:3000,onibus:5000,sirene:8000,jipe:12000};
 const carroLiberado=id=>!PRECO_CARRO[id]||save.carros.includes(id);
 /* personagens do Turbo Kids: nome, número, cor dos olhos e a garagem de cada um */
 const PERSONAGENS={

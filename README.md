@@ -33,10 +33,10 @@ Carros para comprar com moedas (toque no carro com cadeado na garagem para ver e
 
 | Carro | Estilo | Preço |
 |---|---|---|
-| Patrulha nº 190 | Carro de polícia com sirene | 600 |
-| Amarelinho nº 8 | Ônibus escolar | 900 |
-| Sirene nº 193 | Caminhão de bombeiro com escada e sirene | 1200 |
-| Trilha nº 44 | Jipe de aventura com pneus grandes e estepe | 1500 |
+| Patrulha nº 190 | Carro de polícia com sirene | 3.000 |
+| Amarelinho nº 8 | Ônibus escolar | 5.000 |
+| Sirene nº 193 | Caminhão de bombeiro com escada e sirene | 8.000 |
+| Trilha nº 44 | Jipe de aventura com pneus grandes e estepe | 12.000 |
 
 Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a câmera e mudam de cara na corrida: ficam bravos quando vão bater, tontos quando são jogados para fora, assustados no buraco e felizes no turbo, no pulo e no pódio. Na chegada, a câmera vira para a frente do carro e mostra a carinha feliz ou triste antes do resultado. Dá para desligar as carinhas na garagem.
 

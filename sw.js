@@ -1,7 +1,7 @@
 // Guarda o jogo no celular para abrir sem internet.
 // Arquivos do próprio jogo: busca sempre a versão nova (sem o cache de 10 min do GitHub Pages) e usa o cache só sem internet.
 // Three.js, fontes e ícones de fora: vêm do cache.
-const CACHE = 'turbo-kids-v13';
+const CACHE = 'turbo-kids-v14';
 const JS = ['dados', 'audio', 'render', 'carros', 'garagem', 'pista', 'cenarios', 'corrida', 'interface', 'principal'].map((n) => `./js/${n}.js`);
 const ARQUIVOS = [
   './', './index.html', './css/jogo.css', ...JS, './manifest.webmanifest', './icone.svg', './icone-180.png', './icone-192.png', './icone-512.png',
