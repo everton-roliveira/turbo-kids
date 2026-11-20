@@ -103,7 +103,7 @@ function geoListras(id){
 const texNumeros={};
 function texNumero(n){if(texNumeros[n])return texNumeros[n];
   return texNumeros[n]=tex(128,128,(x)=>{x.fillStyle='#fafafa';x.beginPath();x.arc(64,64,58,0,7);x.fill();x.lineWidth=6;x.strokeStyle='#111';x.stroke();
-    x.fillStyle='#111';x.font='800 80px "Baloo 2", sans-serif';x.textAlign='center';x.textBaseline='middle';x.fillText(String(n),64,72);});}
+    x.fillStyle='#111';x.font=`800 ${String(n).length>2?54:80}px "Baloo 2", sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText(String(n),64,72);});}
 
 /* ---- Geometria dos carros: carroceria por seções (loft) ---- */
 function catmull(p0,p1,p2,p3,t){const t2=t*t,t3=t2*t;return 0.5*((2*p1)+(-p0+p2)*t+(2*p0-5*p1+4*p2-p3)*t2+(-p0+3*p1-3*p2+p3)*t3);}
@@ -136,7 +136,8 @@ function geosModelo(id){
   const fcab=z=>{const [w,yt,n]=fcab0(z);const yb=fc(z)[2]-0.12;return[w,yb,Math.max(yt,yb+0.01),n];};
   const corpo=loft(fc,m.corpo[0][0],m.corpo[m.corpo.length-1][0],{taper:0.1,grupo:s=>s<-0.5});
   const cab=loft(fcab,m.cabine[0][0],m.cabine[m.cabine.length-1][0],{aneis:30,taper:0.3,
-    grupo:(s,z)=>s>0.7?!(z>m.teto[0]&&z<m.teto[1]):!(s>-0.2&&(z<m.vidroLat[0]||z>m.vidroLat[1]))});
+    // janela: faixa (seno do ângulo) do vidro lateral e início do teto; carros quadrados (ônibus, jipe) usam faixas próprias
+    grupo:(s,z)=>{const [j0,j1]=m.janela||[-0.2,0.7];return s>j1?!(z>m.teto[0]&&z<m.teto[1]):!(s>j0&&(z<m.vidroLat[0]||z>m.vidroLat[1]));}});
   return geoCache[id]={corpo,cab,fc,fcab};
 }
 function mesclar(geos){const pos=[],nor=[];
@@ -189,17 +190,17 @@ function criarCarro(id,cor,numero,enfeite={}){
   const z0=m.corpo[0][0],z1=m.corpo[m.corpo.length-1][0];
   const [w0,yb0,yt0]=fc(z0),yc0=(yb0+yt0)/2;
   // rodas
-  const rodas=[],dianteiras=[],R=0.35,X=0.86;
+  const re=m.rodaEsc||1,rodas=[],dianteiras=[],R=0.35*re,X=0.86;
   for(const [zz,frente] of [[m.rodas.f,true],[m.rodas.t,false]])for(const lado of [1,-1]){
     const piv=new THREE.Group();piv.position.set(lado*X,R,zz);raiz.add(piv);
-    const esp=new THREE.Group();esp.scale.x=lado;piv.add(esp);
+    const esp=new THREE.Group();esp.scale.set(lado*re,re,re);piv.add(esp);
     const gira=new THREE.Group();esp.add(gira);
     add(gira,GEO.pneu,MAT.pneu,0,0,0,true);add(gira,GEO.aro,matAro(enfeite.aro||m.aro),0,0,0);add(gira,GEO.disco,MAT.disco,0,0,0);
     add(esp,GEO.pinca,matCor(m.pinca),0.05,0.13,-0.12);
     rodas.push(gira);if(frente)dianteiras.push(piv);
     const w=fc(zz)[0];
-    const arco=add(chassi,GEO.arco,MAT.arco,lado*(w*0.965),R,zz);arco.rotation.y=lado*Math.PI/2;
-    add(chassi,GEO.aba,tinta,lado*(w*0.975),R,zz);
+    const arco=add(chassi,GEO.arco,MAT.arco,lado*(w*0.965),R,zz);arco.rotation.y=lado*Math.PI/2;arco.scale.setScalar(re);
+    add(chassi,GEO.aba,tinta,lado*(w*0.975),R,zz).scale.setScalar(re);
   }
   // faróis
   if(m.farol==='frente'){for(const s of [1,-1]){caixa(chassi,.34,.12,.05,MAT.farol,s*.6,.55,z1+.01);}
@@ -231,7 +232,15 @@ function criarCarro(id,cor,numero,enfeite={}){
     caixa(chassi,a.larg,.05,a.corda,MAT.carbono,0,a.y,a.z);
     for(const s of [1,-1])caixa(chassi,.04,a.baixa?.12:.26,a.corda+.12,a.baixa?tinta:MAT.carbono,s*a.larg/2,a.y+(a.baixa?-.03:-.06),a.z);
     if(!a.baixa){const h=a.y-yt+.05;for(const s of [1,-1])caixa(chassi,.05,h,.14,MAT.carbono,s*a.larg*.28,yt+h/2-.05,a.z);}}
-  // número de corrida nas portas
+  // peças a mais (escada, sirenes, estepe, para-choque de jipe...)
+  let sirenes=null;
+  if(m.extras){const mats={tinta,carbono:MAT.carbono,cromo:MAT.cromo,branco:matCor('#f2f2f2'),preto:matCor('#1b1b1f')};
+    if(m.extras.some(e=>e[7]==='luzA')){sirenes={a:new THREE.MeshBasicMaterial({color:0xff2020}),b:new THREE.MeshBasicMaterial({color:0x2060ff})};proprios.push(sirenes.a,sirenes.b);
+      mats.luzA=sirenes.a;mats.luzB=sirenes.b;}
+    for(const [tipo,sx,sy,sz,x,y,z,mk] of m.extras){
+      if(tipo==='estepe'){const p=new THREE.Group();p.position.set(x,y,z);p.rotation.y=Math.PI/2;p.scale.setScalar(re);chassi.add(p);
+        add(p,GEO.pneu,MAT.pneu,0,0,0,true);add(p,GEO.aro,matAro(enfeite.aro||m.aro),0,0,0);continue;}
+      caixa(chassi,sx,sy,sz,mats[mk]||tinta,x,y,z);}}
   // adesivo lateral (entre as rodas)
   let xNum=0;const ad=enfeite.adesivo;
   if(ad&&ad!=='nenhum'&&ad!=='listras'){
@@ -251,11 +260,14 @@ function criarCarro(id,cor,numero,enfeite={}){
   // olhos e boca (personagem)
   const rosto=enfeite.rosto?criarRosto(id,chassi,cor,proprios):null;
   const so=add(raiz,GEO.sombra,MAT.sombra,0,0.02,0);so.renderOrder=-1;
-  raiz.userData={tinta,rodas,dianteiras,chassi,fogo,proprios,rosto};
+  raiz.userData={tinta,rodas,dianteiras,chassi,fogo,proprios,rosto,sirenes};
   return raiz;
 }
 function descartarCarro(c){const u=c&&c.userData;if(!u)return;u.tinta.dispose();for(const o of u.proprios||[])o.dispose();
   c.traverse(o=>{if(o.geometry&&!geosFixas.has(o.geometry)&&!Object.values(geoCache).some(g=>g.corpo===o.geometry||g.cab===o.geometry||(g.parabrisa&&g.parabrisa.geo===o.geometry)||(g.boca&&g.boca.geo===o.geometry)))o.geometry.dispose();});}
 const enfeiteJogador=()=>({adesivo:save.adesivo,aro:save.aro,nome:nomeJogador().toUpperCase(),rosto:save.rosto});
+// sirene: vermelho e azul piscando alternados
+function piscarSirenes(carro,t){const s=carro.userData.sirenes;if(!s)return;const f=Math.floor(t*5)%2;
+  s.a.color.setHex(f?0xff2020:0x3a0808);s.b.color.setHex(f?0x0a1440:0x2060ff);}
 function pintar(carro,cor){carro.userData.tinta.color.copy(lin(cor));if(carro.userData.rosto)carro.userData.rosto.cor=cor;}
 

@@ -86,14 +86,20 @@ function aviso(txt,cls){const el=$('#aviso');el.textContent=txt;el.className='';
 function chip(txt,ligado){return(b)=>{b.textContent=txt;b.setAttribute('aria-pressed',String(ligado));};}
 function renderGaragem(){
   $('#gMoedas').textContent=save.moedas;const pa=pistaAtual();$('#gNivel').textContent=pa;$('#gTema').textContent=temaDoNivel(pa).ico+' '+temaDoNivel(pa).nome;
-  const mo=MODELOS[save.modelo],pe=PERSONAGENS[save.modelo];$('#gNomeCarro').innerHTML='';$('#gNomeCarro').append(pe.nome+' nº '+pe.num);
+  const vid=carroNaGaragem(),mo=MODELOS[vid],pe=PERSONAGENS[vid];$('#gNomeCarro').innerHTML='';$('#gNomeCarro').append(pe.nome+' nº '+pe.num);
   const sm=document.createElement('small');sm.textContent=mo.sub;$('#gNomeCarro').append(sm);
   const ms=$('#gModelos');
   if(!ms.children.length)for(const id of ORDEM_MODELOS){const m=MODELOS[id];const b=document.createElement('button');b.className='modelo';b.dataset.id=id;
     const i=document.createElement('i');i.style.background=m.cor;const t=document.createElement('span');const nb=document.createElement('b');nb.textContent=PERSONAGENS[id].nome+' ';
     const nn=document.createElement('em');nn.textContent=PERSONAGENS[id].num;nb.append(nn);
-    const ns=document.createElement('small');ns.textContent=m.sub;t.append(nb,ns);b.append(i,t);ms.appendChild(b);}
-  for(const b of ms.children)b.setAttribute('aria-pressed',String(b.dataset.id===save.modelo));
+    const ns=document.createElement('small');ns.textContent=m.sub;t.append(nb,ns);const pr=document.createElement('span');pr.className='preco';b.append(i,t,pr);ms.appendChild(b);}
+  for(const b of ms.children){const id=b.dataset.id,livre=carroLiberado(id);b.setAttribute('aria-pressed',String(id===vid));
+    b.classList.toggle('travado',!livre);b.querySelector('.preco').textContent=livre?'':'🔒 💰 '+PRECO_CARRO[id];}
+  // compra do carro que está na garagem (prévia)
+  const cp=$('#gCompra');cp.hidden=!garagem.previa;
+  if(garagem.previa){const preco=PRECO_CARRO[vid],falta=preco-save.moedas;
+    $('#gCompraTxt').textContent=falta>0?`O ${pe.nome} custa 💰 ${preco}. Faltam ${falta} moedas. Ganhe corridas para juntar!`:`O ${pe.nome} custa 💰 ${preco}.`;
+    const bc=$('#gComprarCarro');bc.disabled=falta>0;bc.textContent='Comprar por 💰 '+preco;}
   const cores=$('#gCores');
   if(!cores.children.length)for(const [hex,nome] of CORES){const b=document.createElement('button');b.className='cor';b.style.background=hex;b.dataset.cor=hex;b.setAttribute('aria-label',nome);cores.appendChild(b);}
   for(const b of cores.children)b.setAttribute('aria-pressed',String(b.dataset.cor===save.cor));
@@ -151,17 +157,23 @@ let tNome=0;
 $('#gNome').addEventListener('input',e=>{const v=e.target.value.replace(/[^\p{L}\p{N} ]/gu,'').slice(0,10);if(v!==e.target.value)e.target.value=v;
   save.nome=v.trim();salvar();clearTimeout(tNome);tNome=setTimeout(trocarCarroGaragem,350);});
 $('#gNome').addEventListener('keydown',e=>{if(e.key==='Enter')e.target.blur();});
-$('#gModelos').addEventListener('click',e=>{const b=e.target.closest('.modelo');if(!b||b.dataset.id===save.modelo)return;
-  save.modelo=b.dataset.id;salvar();trocarCarroGaragem();renderGaragem();Som.iniciar();Som.buzina(BUZINAS[save.modelo]);
+$('#gModelos').addEventListener('click',e=>{const b=e.target.closest('.modelo');if(!b)return;const id=b.dataset.id;if(id===carroNaGaragem())return;
+  // carro liberado: vira o carro da criança; travado: só aparece na garagem para ver e comprar
+  if(carroLiberado(id)){save.modelo=id;garagem.previa=null;salvar();}else garagem.previa=id;
+  trocarCarroGaragem();renderGaragem();Som.iniciar();Som.buzina(BUZINAS[id]);
   const r=garagem.carro.userData.rosto;if(r)r.reagir('feliz',1.5);
-  Voz.falar('Oi! Eu sou o '+PERSONAGENS[save.modelo].nome+'!',{urgente:true});});
+  Voz.falar('Oi! Eu sou o '+PERSONAGENS[id].nome+'!'+(carroLiberado(id)?'':' Quer me comprar?'),{urgente:true});});
+$('#gComprarCarro').addEventListener('click',()=>{const id=garagem.previa,preco=PRECO_CARRO[id];if(!id||save.moedas<preco)return;
+  save.moedas-=preco;save.carros.push(id);save.modelo=id;save.cor=MODELOS[id].cor;garagem.previa=null;salvar();
+  trocarCarroGaragem();renderGaragem();Som.moedas();const r=garagem.carro.userData.rosto;if(r)r.reagir('feliz',2);
+  Voz.falar('Oba! Agora o '+PERSONAGENS[id].nome+' é seu!',{urgente:true});});
 $('#gCores').addEventListener('click',e=>{const b=e.target.closest('.cor');if(!b)return;save.cor=b.dataset.cor;salvar();
   if(save.adesivo==='listras')trocarCarroGaragem();else pintar(garagem.carro,save.cor);renderGaragem();});
 $('#gAdesivos').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;save.adesivo=b.dataset.id;salvar();trocarCarroGaragem();renderGaragem();});
 $('#gAros').addEventListener('click',e=>{const b=e.target.closest('.aro');if(!b)return;save.aro=b.dataset.aro||null;salvar();trocarCarroGaragem();renderGaragem();});
 $('#gMelhorias').addEventListener('click',e=>{const b=e.target.closest('.m-comprar');if(!b||b.disabled)return;const id=b.dataset.id,n=save.up[id];
   if(n>=MAX_UP||save.moedas<PRECOS[n])return;Som.iniciar();save.moedas-=PRECOS[n];save.up[id]++;salvar();Som.moedas();renderGaragem();});
-$('#gCorrer').addEventListener('click',()=>{Voz.falar(comNome('Vamos correr{n}!'),{urgente:true});iniciarCorrida();});
+$('#gCorrer').addEventListener('click',()=>{if(garagem.previa){garagem.previa=null;trocarCarroGaragem();renderGaragem();}Voz.falar(comNome('Vamos correr{n}!'),{urgente:true});iniciarCorrida();});
 $('#gSom').addEventListener('click',()=>{save.som=!save.som;salvar();Som.ligar(save.som);renderGaragem();});
 $('#gMusica').addEventListener('click',()=>{save.musica=!save.musica;salvar();renderGaragem();});
 $('#gVoz').addEventListener('click',()=>{save.voz=!save.voz;salvar();renderGaragem();if(save.voz)Voz.falar('Oi! Eu vou falar com você na corrida!',{urgente:true});});

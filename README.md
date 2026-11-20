@@ -18,7 +18,7 @@ Jogo de corrida 3D para celular (Android e iPhone), feito para crianças pequena
 - A buzina faz o carro da frente sair do caminho.
 
 ## Personagens
-Seis carros com nome, número e garagem própria:
+Seis carros liberados desde o começo, cada um com nome, número e garagem própria:
 
 | Carro | Estilo |
 |---|---|
@@ -28,6 +28,15 @@ Seis carros com nome, número e garagem própria:
 | Barão nº 4 | Esportivo alemão de pista |
 | Tornado nº 12 | Muscle car de corrida |
 | Floco nº 24 | Carro de corrida de 24 horas |
+
+Carros para comprar com moedas (toque no carro com cadeado na garagem para ver e comprar). Eles também aparecem como adversários:
+
+| Carro | Estilo | Preço |
+|---|---|---|
+| Patrulha nº 190 | Carro de polícia com sirene | 600 |
+| Amarelinho nº 8 | Ônibus escolar | 900 |
+| Sirene nº 193 | Caminhão de bombeiro com escada e sirene | 1200 |
+| Trilha nº 44 | Jipe de aventura com pneus grandes e estepe | 1500 |
 
 Os carros têm olhos no para-brisa e boca no capô. Eles piscam, olham para a câmera e mudam de cara na corrida: ficam bravos quando vão bater, tontos quando são jogados para fora, assustados no buraco e felizes no turbo, no pulo e no pódio. Na chegada, a câmera vira para a frente do carro e mostra a carinha feliz ou triste antes do resultado. Dá para desligar as carinhas na garagem.
 

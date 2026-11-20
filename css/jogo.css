@@ -43,6 +43,12 @@ h2{margin:0 0 6px;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;
 .modelo b em{font-style:normal;font-size:.72rem;font-weight:800;background:#fafafa;color:#111;border-radius:999px;padding:0 6px;vertical-align:2px}
 .modelo small{display:block;color:var(--suave);font-size:.78rem;line-height:1.1}
 .modelo[aria-pressed="true"]{border-color:var(--ouro);background:#332d1c}
+.modelo .preco{margin-left:auto;flex:none;color:var(--ouro);font-weight:800;font-size:.85rem;white-space:nowrap}
+.modelo.travado b{opacity:.8}
+.compra{margin-top:10px;background:var(--painel-2);border:2px solid var(--ouro);border-radius:16px;padding:10px 12px;text-align:center}
+.compra p{margin:0 0 8px;font-weight:700}
+.compra .bt-grande{width:100%}
+.compra .bt-grande:disabled{opacity:.45}
 .cores{display:flex;flex-wrap:wrap;gap:10px}
 .cor{width:44px;height:44px;border-radius:50%;border:3px solid rgba(255,255,255,.18);box-shadow:inset 0 -6px 0 rgba(0,0,0,.25);position:relative}
 .cor[aria-pressed="true"]{border-color:var(--ouro);transform:scale(1.12)}

@@ -56,14 +56,16 @@ function montarGaragemTema(id){
   });
 }
 const geosFixas=new Set(Object.values(GEO));
+// garagem.previa: carro ainda não comprado que a criança está olhando
+const carroNaGaragem=()=>garagem.previa||save.modelo;
 function trocarCarroGaragem(){if(garagem.carro){garagem.cena.remove(garagem.carro);descartarCarro(garagem.carro);}
-  if(garagem.temaId!==save.modelo)montarGaragemTema(save.modelo);
-  garagem.carro=criarCarro(save.modelo,save.cor,PERSONAGENS[save.modelo].num,enfeiteJogador());garagem.cena.add(garagem.carro);}
+  const id=carroNaGaragem();if(garagem.temaId!==id)montarGaragemTema(id);
+  garagem.carro=criarCarro(id,garagem.previa?MODELOS[id].cor:save.cor,PERSONAGENS[id].num,enfeiteJogador());garagem.cena.add(garagem.carro);}
 trocarCarroGaragem();
 // a parede usa a fonte do jogo: redesenha quando ela terminar de carregar
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{garagem.temaId=null;trocarCarroGaragem();});
 const vCam=new THREE.Vector3();
-function atualizarGaragem(dt){garagem.ang+=dt*0.35;const r=retrato?9.5:8.5;
+function atualizarGaragem(dt){garagem.ang+=dt*0.35;piscarSirenes(garagem.carro,performance.now()/1000);const r=retrato?9.5:8.5;
   camera.position.set(Math.sin(garagem.ang)*r,2.6,Math.cos(garagem.ang)*r);camera.lookAt(0,0.6,0);
   const u=garagem.carro.userData;
   for(const p of u.dianteiras)p.rotation.y=Math.sin(garagem.ang*0.7)*0.25;

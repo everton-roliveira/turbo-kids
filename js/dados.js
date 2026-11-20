@@ -38,7 +38,36 @@ const MODELOS={
     cabine:[[-1.7,.22,.78,2.4],[-1.0,.44,1.0,2.4],[-.3,.52,1.1,2.4],[.35,.5,1.04,2.4],[.85,.38,.82,2.4],[1.1,.26,.7,2.4]],
     teto:[-.6,.2],vidroLat:[-.5,.5],rodas:{f:1.5,t:-1.5},asa:{z:-2.2,y:1.0,larg:2.0,corda:.42},aleta:true,farol:'fino',lanterna:'barra',escape:[[0,.5]],aro:'#2a2c31',pinca:'#ffd000'},
 };
-const ORDEM_MODELOS=['rosso','touro','flecha','gt','v8','proto'];
+/* carros para comprar com moedas: extras = peças a mais [tipo, largura, altura, comprimento, x, y, z, material]
+   (material: tinta, carbono, cromo, branco, preto, luzA/luzB = sirene que pisca) */
+const escada=[['caixa',.06,.06,3.2,-.38,1.72,-.85,'cromo'],['caixa',.06,.06,3.2,.38,1.72,-.85,'cromo'],
+  ...[0,1,2,3,4,5,6,7,8].map(k=>['caixa',.76,.04,.05,0,1.72,-2.3+k*.36,'cromo'])];
+Object.assign(MODELOS,{
+  patrulha:Object.assign({},MODELOS.v8,{nome:'Patrulha',sub:'Carro de polícia',cor:'#1f3fb8',asa:null,capo:false,escape:[[-.5,.3]],
+    cabine:MODELOS.v8.cabine.map(([z,w,t,n])=>[z,w,t+.06,n]),aro:'#d6d9de',pinca:'#2a2c31',
+    extras:[['caixa',1.0,.08,.32,0,1.42,-.45,'carbono'],['caixa',.42,.14,.26,-.25,1.52,-.45,'luzA'],['caixa',.42,.14,.26,.25,1.52,-.45,'luzB']]}),
+  onibus:{nome:'Ônibus escolar',sub:'Ônibus escolar',cor:'#f5c400',
+    corpo:[[-2.9,.94,.3,1.05,8],[-2.8,.98,.24,1.1,8],[-1,.98,.24,1.1,8],[1.6,.98,.24,1.1,8],[2.3,.97,.24,1.0,8],[2.6,.93,.27,.92,7]],
+    cabine:[[-2.85,.92,2.05,8],[-2.6,.96,2.2,8],[-.5,.96,2.2,8],[1.4,.96,2.2,8],[1.7,.95,2.02,7],[1.95,.92,1.62,6],[2.12,.9,1.2,5]],
+    teto:[-2.6,1.4],vidroLat:[-2.5,1.7],janela:[0.05,0.6],rodas:{f:1.9,t:-1.9},farol:'frente',lanterna:'redonda',escape:[[.6,.35]],aro:'#2a2c31',pinca:'#2a2c31',
+    extras:[['caixa',.02,.07,4.9,-.99,1.0,-.4,'preto'],['caixa',.02,.07,4.9,.99,1.0,-.4,'preto'],['caixa',.02,.07,4.9,-.99,.62,-.4,'preto'],['caixa',.02,.07,4.9,.99,.62,-.4,'preto']]},
+  sirene:{nome:'Bombeiro',sub:'Caminhão de bombeiro',cor:'#e3120b',
+    corpo:[[-2.6,.94,.28,1.5,8],[-2.5,.98,.22,1.6,8],[-1,.99,.22,1.62,8],[.5,.99,.22,1.62,8],[.85,.99,.22,1.6,8],[.95,.99,.22,1.2,8],[1.5,.99,.22,1.15,8],[2.2,.98,.22,1.1,8],[2.5,.94,.25,1.0,7]],
+    cabine:[[.95,.92,1.95,7],[1.2,.95,2.0,7],[1.5,.95,2.0,7],[1.8,.94,1.8,6],[2.05,.9,1.42,5],[2.2,.88,1.2,5]],
+    teto:[.95,1.45],vidroLat:[1.0,1.9],janela:[0.05,0.6],rodas:{f:1.75,t:-1.55},farol:'frente',lanterna:'barra',escape:[[.6,.35]],aro:'#d6d9de',pinca:'#d6d9de',
+    extras:[...escada,['caixa',.9,.06,.26,0,2.02,1.25,'carbono'],['caixa',.34,.14,.22,-.28,2.11,1.25,'luzA'],['caixa',.34,.14,.22,.28,2.11,1.25,'luzB'],
+      ['caixa',.02,.1,3.4,-1.0,.85,-.75,'branco'],['caixa',.02,.1,3.4,1.0,.85,-.75,'branco']]},
+  jipe:{nome:'Jipe',sub:'Jipe de aventura',cor:'#4f7a2a',rodaEsc:1.25,
+    corpo:[[-2.0,.9,.5,1.08,7],[-1.9,.96,.45,1.12,7],[-.5,.96,.45,1.12,7],[.5,.96,.45,1.12,7],[1.6,.95,.45,1.05,7],[2.05,.9,.5,.95,6]],
+    cabine:[[-1.85,.9,1.85,6],[-1.5,.92,1.9,6],[-.4,.92,1.9,6],[.2,.92,1.9,6],[.45,.91,1.72,5],[.72,.9,1.25,5]],
+    teto:[-1.8,.25],vidroLat:[-1.4,.45],janela:[0.05,0.6],rodas:{f:1.35,t:-1.3},farol:'redondo',lanterna:'redonda',escape:[[.55,.55]],aro:'#2a2c31',pinca:'#ff9d2e',
+    extras:[['estepe',0,0,0,0,1.0,-2.22,'pneu'],['caixa',1.3,.08,.08,0,.78,2.14,'cromo'],['caixa',.08,.42,.08,-.45,.72,2.14,'cromo'],['caixa',.08,.42,.08,.45,.72,2.14,'cromo'],
+      ['caixa',1.3,.06,.1,0,1.95,.1,'carbono']]},
+});
+const ORDEM_MODELOS=['rosso','touro','flecha','gt','v8','proto','patrulha','onibus','sirene','jipe'];
+// preço dos carros que não vêm liberados
+const PRECO_CARRO={patrulha:600,onibus:900,sirene:1200,jipe:1500};
+const carroLiberado=id=>!PRECO_CARRO[id]||save.carros.includes(id);
 /* personagens do Turbo Kids: nome, número, cor dos olhos e a garagem de cada um */
 const PERSONAGENS={
   rosso:{nome:'Rubi',num:7,olho:'#2f7fe0',garagem:{parede:'#5a1414',fundo:0x1e0808,piso:0x2b1717,anel:0xe3120b,destaque:'#ffd000',luz:0xffe2cc,itens:['pneus','bandeira','caixa','pneus','bandeira','pneus','caixa','bandeira']}},
@@ -46,17 +75,22 @@ const PERSONAGENS={
   flecha:{nome:'Cometa',num:21,olho:'#8a5a2b',garagem:{parede:'#14234a',fundo:0x060b1c,piso:0x161d30,anel:0xff7a00,destaque:'#ff9d2e',luz:0xd9e4ff,itens:['cone','cone','pneus','cone','cone','pneus','cone','cone']}},
   gt:{nome:'Barão',num:4,olho:'#4f6478',garagem:{parede:'#d8dce2',fundo:0x9aa1ab,piso:0xb9bec6,anel:0x2a2c31,destaque:'#e3120b',luz:0xffffff,itens:['caixa','pneus','caixa','caixa','pneus','caixa','bandeira','caixa']}},
   v8:{nome:'Tornado',num:12,olho:'#2a6fdb',garagem:{parede:'#7a3424',fundo:0x24100a,piso:0x2c3037,anel:0x1e5bd8,destaque:'#f2f2f2',luz:0xffe9cf,itens:['pneus','barril','pneus','bandeira','barril','pneus','barril','pneus']}},
+  patrulha:{nome:'Patrulha',num:190,olho:'#3a6fd8',garagem:{parede:'#1a2a55',fundo:0x070c1c,piso:0x1d2433,anel:0x2a4fd0,destaque:'#f2f2f2',luz:0xdde6ff,itens:['cone','cone','caixa','cone','bandeira','cone','caixa','cone']}},
+  onibus:{nome:'Amarelinho',num:8,olho:'#8a5a2b',garagem:{parede:'#8a6a10',fundo:0x2a2006,piso:0x3b3324,anel:0xf5c400,destaque:'#1b1b1f',luz:0xfff2cc,itens:['caixa','caixa','cone','caixa','bandeira','caixa','cone','caixa']}},
+  sirene:{nome:'Sirene',num:193,olho:'#2f7fe0',garagem:{parede:'#7a1010',fundo:0x200606,piso:0x3a3a3a,anel:0xe3120b,destaque:'#ffd000',luz:0xffe0d0,itens:['cone','barril','cone','pneus','cone','barril','cone','bandeira']}},
+  jipe:{nome:'Trilha',num:44,olho:'#3aa64a',garagem:{parede:'#4a3a24',fundo:0x140e06,piso:0x3a2c1c,anel:0x4f7a2a,destaque:'#ff9d2e',luz:0xffe8c8,itens:['pneus','barril','pneus','pneus','barril','pneus','bandeira','barril']}},
   proto:{nome:'Floco',num:24,olho:'#1fb6c9',garagem:{parede:'#0b0f16',fundo:0x020306,piso:0x10141b,anel:0x19e0d0,destaque:'#19e0d0',luz:0xd6fbff,itens:['cone','pneus','cone','bandeira','cone','pneus','cone','bandeira']}},
 };
 
 /* ================= Progresso salvo ================= */
 const CHAVE='corrida-turbo-v1';
 const PADRAO=()=>({moedas:0,nivel:1,cor:'#d40000',modelo:'rosso',up:{motor:0,acel:0,amort:0,pneu:0},auto:false,som:true,
-  musica:true,voz:true,desvioTurbo:false,tutorial:false,adesivo:'nenhum',aro:null,nome:'',inclinar:false,trofeus:{},qualidade:null,rosto:true});
+  musica:true,voz:true,desvioTurbo:false,tutorial:false,adesivo:'nenhum',aro:null,nome:'',inclinar:false,trofeus:{},qualidade:null,rosto:true,carros:[]});
 let save=PADRAO();
 try{const s=JSON.parse(localStorage.getItem(CHAVE)||'null');if(s){save=Object.assign(PADRAO(),s);save.up=Object.assign(PADRAO().up,s.up||{});
   if(!save.trofeus||typeof save.trofeus!=='object')save.trofeus={};}}catch(e){}
-if(!MODELOS[save.modelo])save.modelo='rosso';
+if(!Array.isArray(save.carros))save.carros=[];
+if(!MODELOS[save.modelo]||!carroLiberado(save.modelo))save.modelo='rosso';
 function salvar(){try{localStorage.setItem(CHAVE,JSON.stringify(save));}catch(e){}}
 
 const CORES=[['#d40000','Vermelho'],['#f5c400','Amarelo'],['#ff7300','Laranja'],['#9ccf00','Verde-limão'],['#10a050','Verde'],['#1e5bd8','Azul'],['#19a7e0','Azul claro'],
@@ -103,7 +137,7 @@ const pistaAtual=()=>clamp(Math.round(save.pista||save.nivel),1,save.nivel);
 const ADESIVOS=[['nenhum','Nenhum'],['raio','⚡ Raio'],['chamas','🔥 Chamas'],['estrelas','⭐ Estrelas'],['listras','🏁 Listras']];
 const AROS=[['#d6d9de','Prata'],['#2a2c31','Preto'],['#d4a017','Dourado'],['#f2f2f2','Branco'],['#d40000','Vermelho'],['#1e5bd8','Azul']];
 /* cada carro tem sua buzina (duas notas) */
-const BUZINAS={rosso:[440,554],touro:[330,415],flecha:[523,659],gt:[392,494],v8:[220,277],proto:[587,740]};
+const BUZINAS={rosso:[440,554],touro:[330,415],flecha:[523,659],gt:[392,494],v8:[220,277],proto:[587,740],patrulha:[659,880],onibus:[262,330],sirene:[196,247],jipe:[294,370]};
 // 0 na pista 1 e 1 na última: a dificuldade sobe aos poucos por todas as pistas
 const progresso=n=>clamp((n-1)/(TEMAS.length-1),0,1);
 function paramsNivel(n){const t=progresso(n);return{
