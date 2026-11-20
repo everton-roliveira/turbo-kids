@@ -94,6 +94,13 @@ A partir da pista 2 aparece um túnel, e a partir da pista 3 uma ponte. Depois d
 - Cada cenário tem a sua música, gerada pelo próprio jogo (praia tropical, pirata em 6/8, circo, Natal com sininhos, espaço calmo na Lua...).
 - Comemoração com confete e fogos no pódio.
 
+## Anúncios com prêmio
+- Só aparecem quando o jogo roda em um portal de jogos (Poki ou CrazyGames). No site próprio não há anúncios. Para testar com um anúncio simulado, abra com `?anuncios=teste`.
+- Prêmios (sempre opcionais): correr com 2 turbos extras, dobrar as moedas da corrida e ganhar 200 moedas na garagem. Limite de 6 por dia, e os pais podem desligar na garagem (📺 Prêmios com anúncio).
+- Entre as corridas, o portal pode mostrar um intervalo (ele decide a frequência). Desliga em `js/anuncios/config.js` (`intervaloEntreCorridas`).
+- Administrador: toque 5 vezes na versão, no fim da garagem, e digite o código. Os prêmios saem na hora, sem anúncio e sem limite, e não há intervalos. Vale para o aparelho onde o código foi digitado. O jogo guarda só o hash do código (`HASH_ADMIN` em `js/anuncios/config.js`). Para trocar o código, gere o SHA-256 do novo e substitua o hash.
+- Portal: `plataforma` em `js/anuncios/config.js` (`auto` descobre pelo endereço). Cada portal tem o seu arquivo em `js/anuncios/provedores/`.
+
 ## Técnico
 - [Three.js](https://threejs.org/) r128, sem build. O código está em ES modules (`import`/`export`) dentro de `js/`, e o `index.html` carrega só o `js/main.js`:
 

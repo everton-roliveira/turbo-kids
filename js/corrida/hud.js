@@ -18,6 +18,7 @@ export function atualizarHUD(){
   const bt=$('#bTurbo');bt.style.setProperty('--carga',(j.turboT>0?100:j.turboCarga/30*100).toFixed(0)+'%');
   bt.classList.toggle('pronto',j.turboCarga>=30&&j.turboT<=0);bt.classList.toggle('ligado',j.turboT>0);
   $('#turboFx').style.opacity=j.turboT>0?'1':'0';
+  const ex=corrida.turbosExtra>0?'+'+corrida.turbosExtra:'';if(bt.dataset.extra!==ex)bt.dataset.extra=ex;
 }
 export function narrar(){
   const j=corrida.jogador;if(j.terminou)return;

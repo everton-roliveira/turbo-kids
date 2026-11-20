@@ -57,7 +57,7 @@ export function iniciarCorrida(){
     carros.push(c);
   }
   definirCorrida({cena,sol,p,obs,carros,jogador,tema,nivel,animados,tCen:0,moedasMesh,ordem:[],contagem:3.6,ultimoNum:4,fimT:0,mostrou:false,
-    pegas:0,posAnt:4,voltaAnt:0,turboAvisado:true,t:0,tut:null});
+    pegas:0,posAnt:4,voltaAnt:0,turboAvisado:true,t:0,tut:null,turbosExtra:0});
   const barra=$('#hProg');barra.innerHTML='';
   for(const c of carros){const el=document.createElement('i');el.className='ponto'+(c.ehJogador?' eu':'');el.style.background=c.cor;barra.appendChild(el);c.ponto=el;}
   $('#hud').classList.remove('chegou');$('#hud').hidden=false;$('#garagem').hidden=true;$('#resultado').hidden=true;$('#pausa').hidden=true;$('#album').hidden=true;

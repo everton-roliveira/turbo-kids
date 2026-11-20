@@ -11,6 +11,8 @@ import {aviso} from '../interface/telas.js';
 
 export function usarTurbo(){const j=corrida&&corrida.jogador;if(!j||modo!=='corrida'||j.ia)return;
   if(j.turboCarga>=30&&j.turboT<=0&&j.estado==='normal'){j.turboT=3;j.turboCarga=0;corrida.turboAvisado=false;Som.turbo();aviso('TURBO! 🔥','bom');
+    // turbo extra (prêmio do anúncio): já fica pronto de novo
+    if(corrida.turbosExtra>0){corrida.turbosExtra--;j.turboCarga=30;corrida.turboAvisado=true;}
     if(corrida.tut)corrida.tut.fez.turbo=true;}}
 export function buzinar(){
   Som.iniciar();

@@ -19,4 +19,6 @@ export function redimensionar(){
 }
 addEventListener('resize',redimensionar);
 // troca o valor a partir de outros módulos (um import não pode ser reatribuído)
-export function mudarModo(v){modo=v;}
+// quem quiser saber quando o modo muda (ex.: anúncios avisam o portal que a criança está jogando)
+export const aoMudarModo=[];
+export function mudarModo(v){const antes=modo;modo=v;if(antes!==v)for(const f of aoMudarModo)f(v,antes);}

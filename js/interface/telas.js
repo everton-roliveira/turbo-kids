@@ -9,6 +9,8 @@ import {corrida} from '../corrida/estado.js';
 import {iniciarCorrida} from '../corrida/iniciar.js';
 import {Festa} from './festa.js';
 import {renderGaragem} from '../garagem/painel.js';
+import {Anuncios} from '../anuncios/index.js';
+import {ehAdmin} from '../anuncios/admin.js';
 
 export const PREMIO=[500,300,200,100,60,30];
 export function mostrarResultado(){
@@ -23,6 +25,9 @@ export function mostrarResultado(){
     :'Precisa chegar entre os 3 primeiros. Compre melhorias na garagem e tente de novo!';
   $('#rDetalhe').textContent=pegas?`prêmio ${premio} + moedas da pista ${pegas}`:'';
   $('#rCorrer').textContent=passou?'Próxima ▶':'De novo ▶';
+  // dobrar as moedas com um anúncio (administrador: sem anúncio)
+  corrida.premioTotal=total;const rd=$('#rDobrar');rd.hidden=!(total>0&&Anuncios.disponivel());rd.disabled=false;
+  rd.textContent=`${ehAdmin()?'⭐':'📺'} Dobrar as moedas (+${total})`;
   $('#resultado').hidden=false;
   const el=$('#rPremio');let v=0;const passo=Math.max(5,Math.round(total/30));
   const conta=()=>{v=Math.min(total,v+passo);el.textContent=v;if(v<total)requestAnimationFrame(conta);};conta();
@@ -41,7 +46,11 @@ export function pausar(){if(modo!=='corrida'&&modo!=='contagem')return;corrida.m
 export function continuar(){if(modo!=='pausa')return;mudarModo(corrida.modoAntes);$('#pausa').hidden=true;if(modo==='corrida')Musica.iniciar();}
 export function aviso(txt,cls){const el=$('#aviso');el.textContent=txt;el.className='';void el.offsetWidth;el.className='mostra '+(cls||'');}
 $('#rGaragem').addEventListener('click',irGaragem);
-$('#rCorrer').addEventListener('click',iniciarCorrida);
+$('#rCorrer').addEventListener('click',async()=>{await Anuncios.antesDaCorrida();iniciarCorrida();});
+$('#rDobrar').addEventListener('click',async e=>{const b=e.currentTarget;if(!corrida||corrida.dobrou)return;b.disabled=true;
+  const ok=await Anuncios.verPremiado();
+  if(ok){corrida.dobrou=true;save.moedas+=corrida.premioTotal;salvar();Som.moedas();$('#rPremio').textContent=corrida.premioTotal*2;b.hidden=true;aviso('Moedas dobradas! 💰','bom');}
+  else{b.disabled=false;aviso('O anúncio não carregou. Tente depois!','ruim');}});
 $('#bPausa').addEventListener('click',pausar);
 $('#pVoltar').addEventListener('click',continuar);
 $('#pSair').addEventListener('click',irGaragem);

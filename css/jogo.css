@@ -45,6 +45,11 @@ h2{margin:0 0 6px;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;
 .modelo[aria-pressed="true"]{border-color:var(--ouro);background:#332d1c}
 .modelo .preco{margin-left:auto;flex:none;color:var(--ouro);font-weight:800;font-size:.85rem;white-space:nowrap}
 .modelo.travado b{opacity:.8}
+.bt-anuncio{display:block;width:100%;margin-top:8px;background:#1d3a5c;border:2px solid #4fa3ff;color:#dff0ff;border-radius:16px;padding:10px 12px 7px;font-weight:800;font-size:1.05rem}
+.bt-anuncio:disabled{opacity:.5}
+#resultado .bt-anuncio{margin:10px 0 0}
+.anuncio-teste{z-index:50}
+#bTurbo[data-extra]:not([data-extra=""])::after{content:attr(data-extra);position:absolute;top:-6px;right:-6px;background:#4fa3ff;color:#fff;border-radius:999px;padding:2px 7px;font-size:.8rem;font-weight:800}
 .compra{margin-top:10px;background:var(--painel-2);border:2px solid var(--ouro);border-radius:16px;padding:10px 12px;text-align:center}
 .compra p{margin:0 0 8px;font-weight:700}
 .compra .bt-grande{width:100%}

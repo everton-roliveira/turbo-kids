@@ -10,6 +10,7 @@ import {TEMAS} from './pistas/temas/index.js';
 import {corrida} from './corrida/estado.js';
 import {atualizarCorrida} from './corrida/atualizar.js';
 import {renderGaragem} from './garagem/painel.js';
+import {Anuncios} from './anuncios/index.js';
 // módulos que só registram botões, teclas e telas
 import './corrida/acoes.js';
 import './interface/album.js';
@@ -28,3 +29,5 @@ Qualidade.aplicar();
 renderGaragem();
 redimensionar();
 requestAnimationFrame(loop);
+// anúncios: carrega o SDK do portal (se estiver em um) e mostra os botões de prêmio
+Anuncios.iniciar().then(renderGaragem);
