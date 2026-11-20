@@ -9,6 +9,7 @@ Jogo de corrida 3D para celular (Android e iPhone), feito para crianças pequena
 - No computador: setas ou WASD, Espaço para o turbo, H para a buzina, P ou Esc para pausar.
 
 ## Regras
+- Cada corrida tem 3 voltas.
 - Fique entre os 3 primeiros para ir à próxima pista. Se não, corre de novo.
 - Toque na pista, no alto da garagem, para abrir o mapa e escolher qualquer pista já liberada. As outras aparecem com cadeado.
 - Cada posição ganha moedas. Na pista também tem moedas para pegar.

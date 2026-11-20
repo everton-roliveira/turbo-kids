@@ -67,7 +67,7 @@ export function renderGaragem(){
   $('#gTurboAnuncio').hidden=!pode;$('#gTurboAnuncio').textContent=`${tv} Correr com ${CONFIG_ANUNCIOS.turbosExtras} turbos extras`;
   $('#gMoedasAnuncio').hidden=!pode;$('#gMoedasAnuncio').textContent=`${tv} Ganhar 💰 ${CONFIG_ANUNCIOS.moedasPorAnuncio}`+(adm?'':` (hoje ainda ${Anuncios.restantes()})`);
   $('#gAnuncios').hidden=!Anuncios.provedor||adm;chip('📺 Prêmios com anúncio: '+(save.premiosAnuncio!==false?'sim':'não'),save.premiosAnuncio!==false)($('#gAnuncios'));
-  $('#gVersao').textContent='Turbo Kids · versão 22'+(adm?' · ADM (sem anúncios)':'');
+  $('#gVersao').textContent='Turbo Kids · versão 23'+(adm?' · ADM (sem anúncios)':'');
 }
 export let tNome=0;
 $('#gNome').addEventListener('input',e=>{const v=e.target.value.replace(/[^\p{L}\p{N} ]/gu,'').slice(0,10);if(v!==e.target.value)e.target.value=v;

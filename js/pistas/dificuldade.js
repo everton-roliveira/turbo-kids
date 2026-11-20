@@ -12,4 +12,4 @@ export function paramsNivel(n){const t=progresso(n);return{
   agressao:0.11+0.25*t,
   desvio:0.56+0.39*t,
   folga:1-0.3*t,
-  voltas:2};}
+  voltas:3};}
